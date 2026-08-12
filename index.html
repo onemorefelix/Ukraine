@@ -64,7 +64,6 @@
 *{box-sizing:border-box;}
 html{
   scroll-behavior:smooth;
-  scroll-snap-type:y mandatory;
 }
 body{
   margin:0;
@@ -87,10 +86,6 @@ img{display:block;max-width:100%;}
 .container{max-width:1800px;margin:0 auto;padding:0 48px;}
 
 /* ---------- SHARED FULLSCREEN SLIDE GRAMMAR (same visual language as the hero) ---------- */
-.slide, .chapter-slide, .hero{
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
-}
 .slide{
   position:relative;overflow:hidden;
   min-height:100vh;min-height:100dvh;
@@ -111,6 +106,24 @@ img{display:block;max-width:100%;}
   transition:opacity .7s ease, transform .7s ease;
 }
 .slide-content.is-visible{opacity:1;transform:translateY(0);}
+
+/* fact slides: photo beside the text instead of photo-behind-text */
+.slide.part-a, .slide.part-b{
+  background:var(--soil);
+  display:flex;align-items:center;gap:4.5vw;
+  max-width:1700px;margin:0 auto;padding:12vh 6vw;
+}
+.slide.part-a .slide-media, .slide.part-b .slide-media{
+  position:relative;inset:auto;order:1;
+  flex:0 0 55%;height:min(78vh,760px);
+  border-radius:3px;overflow:hidden;box-shadow:var(--shadow);
+}
+.slide.part-a .slide-scrim, .slide.part-b .slide-scrim{display:none;}
+.slide.part-a .slide-content, .slide.part-b .slide-content{
+  order:2;flex:1 1 auto;padding:0;max-width:520px;
+}
+.slide.part-a h3, .slide.part-b h3{font-size:clamp(30px,4.2vw,56px);}
+.slide.flip{flex-direction:row-reverse;}
 .slide-eyebrow{
   font-family:'PT Sans',sans-serif;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   font-size:12.5px;color:var(--wheat);margin-bottom:18px;display:block;
@@ -175,7 +188,6 @@ img{display:block;max-width:100%;}
   min-height:100vh;min-height:100dvh;min-width:177.78vh;min-width:177.78dvh;
   border:0;
 }
-.slide-video .slide-scrim{background:linear-gradient(180deg, rgba(14,11,8,0) 50%, rgba(14,11,8,.88) 100%);pointer-events:none;}
 
 /* ---------- AT A GLANCE ---------- */
 .glance{background:var(--soil);padding:34px 0;}
@@ -255,6 +267,16 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   .t-wide{grid-column:span 4;}
   .t-small{grid-column:span 2;}
   .fieldnotes .chip-row{grid-template-columns:repeat(2,1fr);}
+  .slide.part-a, .slide.part-b, .slide.flip{
+    flex-direction:column;align-items:stretch;gap:26px;
+    padding:9vh 6vw 7vh;min-height:0;
+  }
+  .slide.part-a .slide-media, .slide.part-b .slide-media{
+    flex-basis:auto;width:100%;height:42vh;order:1;
+  }
+  .slide.part-a .slide-content, .slide.part-b .slide-content{
+    order:2;max-width:none;
+  }
 }
 @media (max-width:560px){
   .glance-grid{grid-template-columns:repeat(2,1fr);}
@@ -267,7 +289,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
 .fieldnotes .container{max-width:1800px;}
 .fieldnotes h2{font-size:clamp(28px,3.8vw,38px);margin-bottom:10px;}
 .fieldnotes p.lede{color:var(--ink-soft);max-width:60ch;margin-bottom:30px;}
-.chip-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.chip-row{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;}
 .chip{
   border:1px solid var(--rule);opacity:0;transform:translateY(18px);
   transition:opacity .6s ease, transform .6s ease, border-color .3s ease;
@@ -351,20 +373,14 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
     <svg class="stitch-underline" viewBox="0 0 560 26" preserveAspectRatio="none" aria-hidden="true">
       <path d="M2 18 Q 20 2, 38 18 T 74 18 T 110 18 T 146 18 T 182 18 T 218 18 T 254 18 T 290 18 T 326 18 T 362 18 T 398 18 T 434 18 T 470 18 T 506 18 T 542 18"/>
     </svg>
-    <p class="hero-dek">Two parts, one sixty-minute sitting — from black soil and a thousand-year emblem to the spirits that still live behind the stove, the fires lit at midsummer, and the songs that outlasted every empire that tried to erase them.</p>
+    <p class="hero-dek">Two parts — from black soil and a thousand-year emblem to the spirits that still live behind the stove, the fires lit at midsummer, and the songs that outlasted every empire that tried to erase them.</p>
   </div>
   <p class="scroll-cue">Scroll</p>
 </header>
 
 <section class="slide slide-video">
   <div class="video-wrap">
-    <iframe src="https://www.youtube.com/embed/9BE_kv5uAGU?rel=0" title="Ukraine from Above — 4K UHD" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-  <div class="slide-scrim"></div>
-  <div class="slide-content">
-    <p class="slide-eyebrow">A Cinematic Interlude</p>
-    <h3>Ukraine, From Above</h3>
-    <p class="slide-detail">Before the facts — just the land itself, the way it actually looks: enormous, unhurried, worth the trip on its own.</p>
+    <iframe src="https://www.youtube.com/embed/9BE_kv5uAGU?rel=0" title="Ukraine from Above — 4K UHD" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
   </div>
 </section>
 
@@ -394,6 +410,11 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
       <figure class="tile t-med"><img src="images/kamianets_fortress.jpg" alt="Kamianets-Podilskyi fortress at sunrise"><span class="tile-cap">Kamianets-Podilskyi fortress at sunrise</span></figure>
       <figure class="tile t-small"><img src="images/kosiv_ceramics.jpg" alt="Kosiv painted ceramics, early 1900s"><span class="tile-cap">Kosiv painted ceramics, early 1900s</span></figure>
       <figure class="tile t-small"><img src="images/pysanka_vegreville.jpg" alt="The giant pysanka, Vegreville, Canada"><span class="tile-cap">The giant pysanka, Vegreville, Canada</span></figure>
+      <figure class="tile t-med"><img src="images/yasinia_wooden_church.jpg" alt="The Church of the Ascension, Yasinia, a UNESCO-listed wooden tserkva"><span class="tile-cap">Wooden tserkva, Yasinia, Carpathians</span></figure>
+      <figure class="tile t-wide"><img src="images/kyiv_st_michaels.jpg" alt="St. Michael's Golden-Domed Monastery, Kyiv"><span class="tile-cap">St. Michael's Golden-Domed Monastery, Kyiv</span></figure>
+      <figure class="tile t-wide"><img src="images/lviv_rynok_square.jpg" alt="Rynok Square, Lviv"><span class="tile-cap">Rynok Square, Lviv</span></figure>
+      <figure class="tile t-med"><img src="images/kolomyia_pysanka_museum.jpg" alt="The Pysanka Museum, Kolomyia, shaped like a giant egg"><span class="tile-cap">The Pysanka Museum, Kolomyia</span></figure>
+      <figure class="tile t-small"><img src="images/kolomyia_town_hall.jpg" alt="Town hall, Kolomyia"><span class="tile-cap">Town hall, Kolomyia</span></figure>
   </div>
 </section>
 
@@ -401,7 +422,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/lavra_belltower.jpg" alt="Great Lavra Bell Tower, Kyiv"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">01 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">01 / 13</span></p>
     <h3>Capital, People &amp; Regions</h3>
     <ul class="slide-facts">
             <li>Kyiv, on the Dnipro River</li>
@@ -416,7 +437,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/steppe.jpg" alt="Ukrainian steppe"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">02 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">02 / 13</span></p>
     <h3>The Landscape &mdash; Steppe to Carpathians</h3>
     <ul class="slide-facts">
             <li>Flat steppe in the south</li>
@@ -432,7 +453,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/wheat_field.jpg" alt="Wheat field, Lviv Oblast"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">03 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">03 / 13</span></p>
     <h3>Chornozem &mdash; the Black Soil</h3>
     <ul class="slide-facts">
             <li>Some of the richest soil on Earth</li>
@@ -443,10 +464,24 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
 </section>
 
 <section class="slide part-a">
+  <div class="slide-media"><img src="images/title_hook_sunflower.jpg" alt="Sunflower field, Ukraine"></div>
+  <div class="slide-scrim"></div>
+  <div class="slide-content">
+    <p class="slide-eyebrow"><span class="slide-num">04 / 13</span></p>
+    <h3>Sunflowers &mdash; the Other Gold</h3>
+    <ul class="slide-facts">
+            <li>World&rsquo;s #1 exporter of sunflower oil</li>
+            <li>The fields the hero photo up top borrowed from</li>
+    </ul>
+    <p class="slide-detail">Same black soil, different crop: Ukraine grows more sunflowers than it strictly needs and turns most of them into oil &mdash; enough to lead the entire world in sunflower-oil exports. It&rsquo;s a quieter superlative than the wheat one, but no less real.</p>
+  </div>
+</section>
+
+<section class="slide part-a">
   <div class="slide-media"><img src="images/tryzub_artifact.jpg" alt="10th-century tryzub brick artifact"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">04 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">05 / 13</span></p>
     <h3>Kyivan Rus &amp; the Tryzub</h3>
     <ul class="slide-facts">
             <li>Kyivan Rus, 9th&ndash;13th century</li>
@@ -461,7 +496,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/khortytsia_cossacks.jpg" alt="Cossack festival, Khortytsia island"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">05 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">06 / 13</span></p>
     <h3>The Cossack Era &amp; the Zaporozhian Sich</h3>
     <ul class="slide-facts">
             <li>A self-governing stronghold on the Dnipro</li>
@@ -475,7 +510,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/kamianets_fortress.jpg" alt="Kamianets-Podilskyi fortress at sunrise"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">06 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">07 / 13</span></p>
     <h3>1986 &amp; 1991 &mdash; Chornobyl to Independence</h3>
     <ul class="slide-facts">
             <li>1986 &mdash; Chornobyl</li>
@@ -487,10 +522,25 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
 </section>
 
 <section class="slide part-a">
+  <div class="slide-media"><img src="images/mriya_antonov.jpg" alt="Antonov An-225 Mriya taking off"></div>
+  <div class="slide-scrim"></div>
+  <div class="slide-content">
+    <p class="slide-eyebrow"><span class="slide-num">08 / 13</span></p>
+    <h3>The Mriya &mdash; a Dream, Literally</h3>
+    <ul class="slide-facts">
+            <li>Antonov, the Kyiv design bureau behind it</li>
+            <li>The heaviest aircraft ever built</li>
+            <li>&ldquo;Mriya&rdquo; means &ldquo;dream&rdquo;</li>
+    </ul>
+    <p class="slide-detail">Six engines, a wingspan longer than a football pitch, and a name that translates straight to &ldquo;dream&rdquo; &mdash; the An-225 was the only one of its kind ever built, designed and assembled at Antonov&rsquo;s bureau in Kyiv. It was built to carry the Soviet space shuttle. It ended up carrying pretty much anything too big for a normal cargo plane, and Ukrainian bragging rights along with it.</p>
+  </div>
+</section>
+
+<section class="slide part-a">
   <div class="slide-media"><img src="images/flag_dnipro.jpg" alt="Flag of Ukraine over the city of Dnipro"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">07 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">09 / 13</span></p>
     <h3>The Tryzub &amp; the Flag</h3>
     <ul class="slide-facts">
             <li>A 1,000-year-old emblem</li>
@@ -505,7 +555,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/vyshyvanka_embroidery.jpg" alt="Ukrainian embroidery, close up"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">08 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">10 / 13</span></p>
     <h3>The Vyshyvanka &mdash; Embroidered Identity</h3>
     <ul class="slide-facts">
             <li>A traditional embroidered shirt</li>
@@ -519,7 +569,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/shevchenko_winnipeg.jpg" alt="Taras Shevchenko monument, Winnipeg, Manitoba"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">09 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">11 / 13</span></p>
     <h3>Taras Shevchenko &amp; the Kobzar</h3>
     <ul class="slide-facts">
             <li>Poet, painter, national icon</li>
@@ -534,7 +584,7 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/pysanka.jpg" alt="Painted pysanky eggs"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">10 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">12 / 13</span></p>
     <h3>Pysanky &mdash; History &amp; Technique</h3>
     <ul class="slide-facts">
             <li>Stone and ceramic versions trace to Kyivan Rus</li>
@@ -548,15 +598,15 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
   <div class="slide-media"><img src="images/pysanka_vegreville.jpg" alt="The giant pysanka monument, Vegreville"></div>
   <div class="slide-scrim"></div>
   <div class="slide-content">
-    <p class="slide-eyebrow"><span class="slide-num">11 / 11</span></p>
+    <p class="slide-eyebrow"><span class="slide-num">13 / 13</span></p>
     <h3>Pysanky &mdash; Color &amp; the Giant Egg</h3>
     <ul class="slide-facts">
             <li>Red for life, yellow for harvest, green for spring</li>
             <li>Handed out at Easter</li>
             <li>Its own Canadian coin since 2016</li>
     </ul>
-    <p class="slide-detail">Every colour is already telling the story before anyone opens their mouth &mdash; and Vegreville, Canada took that literally, building a pysanka the size of a small building in 1974. Still the largest one on Earth. The Royal Canadian Mint joined in too, striking an egg-shaped silver coin every year since 2016 that sells out almost on contact.</p>
-          <p class="slide-tip">Where to go: Kosiv, in the Hutsul Carpathians</p>
+    <p class="slide-detail">Every colour is already telling the story before anyone opens their mouth &mdash; and Vegreville, Canada took that literally, building a pysanka the size of a small building in 1974. Still the largest egg-shaped monument on Earth &mdash; though Kolomyia, in the Hutsul Carpathians, got there first with a building shaped like one: the world&rsquo;s only Pysanka Museum, and, coincidentally, Roman&rsquo;s hometown. The Royal Canadian Mint joined the theme too, striking an egg-shaped silver coin every year since 2016 that sells out almost on contact.</p>
+          <p class="slide-tip">Where to go: Kosiv and Kolomyia, in the Hutsul Carpathians</p>
   </div>
 </section>
 
@@ -767,6 +817,10 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
         <div class="chip-photo"><img src="images/kosiv_ceramics.jpg" alt="Kosiv"></div>
         <div class="chip-body"><h4>Kosiv &amp; the Hutsul Region</h4><p>The Carpathian heartland of pysanka-making and folk craft.</p></div>
       </div>
+      <div class="chip">
+        <div class="chip-photo"><img src="images/kolomyia_pysanka_museum.jpg" alt="Kolomyia"></div>
+        <div class="chip-body"><h4>Kolomyia</h4><p>Roman's hometown, and home to the world's only Pysanka Museum.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -790,6 +844,10 @@ table.symbol-table td.meaning{color:var(--ink-soft);}
 
 <script>
 (function(){
+  document.querySelectorAll('.slide.part-a, .slide.part-b').forEach(function(el, i){
+    if (i % 2 === 1) el.classList.add('flip');
+  });
+
   var revealEls = document.querySelectorAll('.tile, .chip, .slide-content');
   if (!('IntersectionObserver' in window)) { revealEls.forEach(function(e){e.classList.add('is-visible');}); }
   else {
