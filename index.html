@@ -79,6 +79,50 @@ button{font-family:inherit;}
 .progress-dot.is-pop{animation:dotPop .5s ease;}
 @keyframes dotPop{0%{transform:scale(1);}45%{transform:scale(1.9);}100%{transform:scale(1);}}
 
+/* ---------- SESSION BAR ---------- */
+.session-bar{background:var(--soil);border-bottom:1px solid var(--rule);}
+.session-inner{padding:12px 32px;display:flex;align-items:center;justify-content:center;gap:14px 28px;flex-wrap:wrap;min-height:24px;text-align:center;}
+.session-identity{display:flex;align-items:center;}
+.session-login{display:flex;gap:8px;align-items:center;}
+.session-login[hidden]{display:none;}
+.session-login input{
+  font-family:'PT Sans',sans-serif;font-size:14px;padding:8px 12px;border:1px solid var(--rule);
+  border-radius:2px;background:var(--card);color:var(--ink);width:180px;
+}
+.session-login button{
+  font-family:'PT Sans',sans-serif;font-size:14px;font-weight:700;background:var(--gold);color:var(--soil);
+  border:none;padding:8px 14px;border-radius:2px;cursor:pointer;
+}
+.session-login button:hover{background:var(--terracotta);color:#FBF3E7;}
+.session-active{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#F0E4D0;font-size:13.5px;}
+.session-active[hidden]{display:none;}
+.session-you strong{color:var(--gold);}
+.session-switch{
+  font-family:'PT Sans',sans-serif;font-size:12.5px;background:none;border:1px solid #4A3A28;color:#C8B29A;
+  padding:4px 10px;border-radius:2px;cursor:pointer;
+}
+.session-switch:hover{border-color:var(--gold);color:var(--gold);}
+.session-online{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+.session-online-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8A7461;white-space:nowrap;}
+.session-online-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.online-chip{
+  display:inline-flex;align-items:center;padding:3px 11px;border-radius:20px;
+  font-family:'PT Sans',sans-serif;font-size:12.5px;font-weight:700;white-space:nowrap;
+  background:color-mix(in srgb, var(--chip) 18%, transparent);
+  color:var(--chip);border:1px solid color-mix(in srgb, var(--chip) 45%, transparent);
+}
+.online-chip.is-offline{
+  opacity:.55;background:transparent;border-color:color-mix(in srgb, var(--chip) 30%, transparent);
+}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;opacity:.4;}
+.online-chip.is-online .chip-dot{opacity:1;box-shadow:0 0 0 3px color-mix(in srgb, var(--chip) 25%, transparent);}
+.online-chip.c0{--chip:var(--gold);}
+.online-chip.c1{--chip:var(--forest);}
+.online-chip.c2{--chip:var(--terracotta);}
+.online-chip.c3{--chip:var(--berry);}
+.online-chip.c4{--chip:var(--indigo);}
+.online-chip.c5{--chip:var(--sky);}
+
 /* ---------- MYSTERY GRID ---------- */
 .grid{padding:24px 0 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
 .grid-divider{
@@ -156,6 +200,37 @@ button{font-family:inherit;}
 .overlay-tip{margin-top:16px;font-size:13.5px;color:var(--forest);font-weight:700;background:rgba(91,130,100,.14);display:inline-block;padding:7px 12px;}
 .overlay-tip[hidden]{display:none;}
 
+/* ---------- WELCOME MODAL ---------- */
+.welcome-modal{
+  position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(21,16,11,.62);opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.welcome-modal[hidden]{display:none;}
+.welcome-modal.is-open{opacity:1;pointer-events:auto;}
+.welcome-card{
+  background:var(--card);border:1px solid var(--rule);border-radius:4px;max-width:420px;width:100%;
+  padding:32px 28px;box-shadow:0 30px 70px -24px rgba(0,0,0,.55);
+  transform:translateY(18px) scale(.96);opacity:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .3s ease;
+}
+.welcome-modal.is-open .welcome-card{transform:none;opacity:1;}
+.welcome-card h3{font-family:'Old Standard TT',serif;font-size:25px;color:var(--ink);}
+.welcome-card p{margin-top:12px;color:var(--ink-soft);font-size:14.5px;line-height:1.55;}
+.welcome-login-form{display:flex;gap:8px;margin-top:20px;}
+.welcome-login-form input{
+  flex:1;min-width:0;font-family:'PT Sans',sans-serif;font-size:14px;padding:10px 12px;
+  border:1px solid var(--rule);border-radius:2px;background:var(--cream);color:var(--ink);
+}
+.welcome-login-form button{
+  font-family:'PT Sans',sans-serif;font-size:14px;font-weight:700;background:var(--gold);color:var(--soil);
+  border:none;padding:10px 16px;border-radius:2px;cursor:pointer;white-space:nowrap;
+}
+.welcome-login-form button:hover{background:var(--terracotta);color:#FBF3E7;}
+.welcome-skip{
+  display:block;margin:14px auto 0;font-family:'PT Sans',sans-serif;font-size:13px;background:none;
+  border:none;color:var(--ink-soft);text-decoration:underline;cursor:pointer;padding:4px;
+}
+.welcome-skip:hover{color:var(--gold);}
+
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
   .tile{transition:none;}
@@ -164,10 +239,24 @@ button{font-family:inherit;}
   .overlay{transition:opacity .15s ease;transform:none !important;}
   .overlay-inner.animate > *{animation:none;}
   .gallery-track{transition:none;}
+  .welcome-modal{transition:opacity .15s ease;}
+  .welcome-card{transition:opacity .15s ease;transform:none !important;}
 }
 </style>
 </head>
 <body>
+
+<div class="welcome-modal" id="welcome-modal" hidden>
+  <div class="welcome-card">
+    <h3>Welcome 👋</h3>
+    <p>Every tile below hides one fact about Ukraine — click through in any order. Your progress saves in this browser automatically. Want to pick it up later on another device? Give yourself a name below.</p>
+    <form class="welcome-login-form" id="welcome-login-form">
+      <input type="text" id="welcome-name-input" placeholder="Your name" maxlength="24" autocomplete="off">
+      <button type="submit">Save &amp; continue</button>
+    </form>
+    <button type="button" class="welcome-skip" id="welcome-skip">Continue without saving</button>
+  </div>
+</div>
 
 <header class="hero">
   <div class="hero-collage">
@@ -205,6 +294,25 @@ button{font-family:inherit;}
   </div>
 </div>
 
+<div class="session-bar" id="session-bar">
+  <div class="session-inner container">
+    <div class="session-identity">
+      <form class="session-login" id="session-login">
+        <input type="text" id="session-name-input" placeholder="Your name" maxlength="24" autocomplete="off">
+        <button type="submit">Continue exploring</button>
+      </form>
+      <div class="session-active" id="session-active" hidden>
+        <span class="session-you">You: <strong id="session-you-name"></strong></span>
+        <button type="button" class="session-switch" id="session-switch">switch name</button>
+      </div>
+    </div>
+    <div class="session-online">
+      <span class="session-online-label" id="session-online-label"></span>
+      <span class="session-online-chips" id="session-online-chips"></span>
+    </div>
+  </div>
+</div>
+
 <div class="progress-bar">
   <div class="progress-inner">
     <span class="progress-count"><span id="progress-num">0</span> / <span id="progress-total">0</span> discovered</span>
@@ -218,9 +326,8 @@ button{font-family:inherit;}
 
 <footer class="closing">
   <div class="container">
-    <blockquote>&ldquo;Без верби і калини нема України.&rdquo;<span>Without willow and kalyna, there is no Ukraine — a Ukrainian proverb</span></blockquote>
+    <blockquote>&ldquo;Без верби і калини нема України.&rdquo;<span>Without willow and kalyna (red viburnum), there is no Ukraine — a Ukrainian proverb</span></blockquote>
     <p class="thanks">Дякую<span>thank you</span></p>
-    <p class="meta">The "Places to Visit" group at the bottom of the grid works the same as every other block — click to reveal, it still counts toward your progress. Blocks marked with a camera icon are waiting on real photos — text is final, images will drop in once supplied.</p>
   </div>
 </footer>
 
@@ -238,9 +345,18 @@ button{font-family:inherit;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 (function(){
   var STORAGE_KEY = 'uaExploreV3';
+  var SESSION_NAME_KEY = 'uaExploreName';
+  var HAS_LINKED_KEY = 'uaExploreLinked';
+  var supabaseClient = window.supabase.createClient(
+    'https://pwjmbbmrvkeoahczggoz.supabase.co',
+    'sb_publishable_PXoJWTNqZsrpzK7b0yVLoQ_eoYTE0DE'
+  );
+  var sessionName = null;
+  var presenceChannel = null;
   var seen = {};
   try { seen = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){}
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -659,6 +775,11 @@ button{font-family:inherit;}
       if (tileHasRealPhoto(b)) tile.style.backgroundImage = 'url(' + b.photos[0].src + ')';
       else tile.style.background = 'linear-gradient(160deg, ' + catColorHex[b.cat] + ', #241A12)';
       tile.querySelector('.tile-title').textContent = b.title;
+    } else {
+      tile.classList.remove('is-seen');
+      tile.style.background = '';
+      tile.style.backgroundImage = '';
+      tile.querySelector('.tile-title').textContent = '';
     }
   }
 
@@ -709,6 +830,196 @@ button{font-family:inherit;}
   }
   updateProgressUI();
 
+  function repaintAllTiles(){
+    BLOCKS.forEach(function(b, i){
+      var tile = document.querySelector('.tile[data-index="' + i + '"]');
+      if (tile) paintTile(tile, b);
+      var pdot = document.getElementById('pdot-' + b.id);
+      if (pdot) pdot.classList.toggle('is-done', !!seen[b.id]);
+    });
+    updateProgressUI();
+  }
+
+  function colorClassFor(name){
+    var h = 0;
+    for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    return 'c' + (h % 6);
+  }
+
+  var KNOWN_PLAYERS_LIMIT = 30;
+  var onlineNames = new Set();
+  var knownPlayers = [];
+
+  function renderOnlineList(){
+    var labelEl = document.getElementById('session-online-label');
+    var chipsEl = document.getElementById('session-online-chips');
+    chipsEl.innerHTML = '';
+
+    var all = knownPlayers.slice();
+    onlineNames.forEach(function(n){ if (all.indexOf(n) === -1) all.push(n); });
+
+    if (!all.length){
+      labelEl.textContent = 'No one has explored yet — be the first';
+      return;
+    }
+    all.sort(function(a, b){
+      var aOn = onlineNames.has(a), bOn = onlineNames.has(b);
+      if (aOn !== bOn) return aOn ? -1 : 1;
+      return a.localeCompare(b);
+    });
+    var onlineCount = all.filter(function(n){ return onlineNames.has(n); }).length;
+    labelEl.textContent = onlineCount + ' online · ' + all.length + ' explored so far:';
+    all.forEach(function(n){
+      var isOn = onlineNames.has(n);
+      var chip = document.createElement('span');
+      chip.className = 'online-chip ' + colorClassFor(n) + (isOn ? ' is-online' : ' is-offline');
+      var dot = document.createElement('span');
+      dot.className = 'chip-dot';
+      chip.appendChild(dot);
+      chip.appendChild(document.createTextNode(n));
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  function loadKnownPlayers(){
+    supabaseClient.from('sessions').select('name').order('updated_at', { ascending: false })
+      .limit(KNOWN_PLAYERS_LIMIT).then(function(res){
+        if (res.data) knownPlayers = res.data.map(function(r){ return r.name; });
+        renderOnlineList();
+      });
+  }
+
+  function syncProgress(){
+    if (!sessionName) return;
+    supabaseClient.from('sessions').upsert({
+      name: sessionName, seen: seen, updated_at: new Date().toISOString()
+    }).then(function(res){ if (res.error) console.error('Sync failed:', res.error); });
+  }
+
+  var presenceReady = false;
+  var pendingTrackName = null;
+
+  function startPresence(){
+    presenceChannel = supabaseClient.channel('ukraine-explorer-online');
+    presenceChannel.on('presence', { event: 'sync' }, function(){
+      var state = presenceChannel.presenceState();
+      var names = [];
+      Object.keys(state).forEach(function(key){
+        state[key].forEach(function(p){ if (p.name) names.push(p.name); });
+      });
+      onlineNames = new Set(names);
+      renderOnlineList();
+    });
+    presenceChannel.subscribe(function(status){
+      if (status === 'SUBSCRIBED'){
+        presenceReady = true;
+        if (pendingTrackName) trackPresence(pendingTrackName);
+      }
+    });
+  }
+
+  function trackPresence(name){
+    if (!presenceReady){ pendingTrackName = name; return; }
+    pendingTrackName = null;
+    presenceChannel.track({ name: name });
+  }
+
+  function untrackPresence(){
+    pendingTrackName = null;
+    if (presenceReady) presenceChannel.untrack();
+  }
+
+  function loginAs(name){
+    name = name.trim();
+    if (!name) return;
+    var hasLinkedBefore = false;
+    try { hasLinkedBefore = localStorage.getItem(HAS_LINKED_KEY) === 'true'; } catch(e){}
+
+    sessionName = name;
+    try {
+      localStorage.setItem(SESSION_NAME_KEY, name);
+      localStorage.setItem(HAS_LINKED_KEY, 'true');
+    } catch(e){}
+    document.getElementById('session-login').hidden = true;
+    document.getElementById('session-active').hidden = false;
+    document.getElementById('session-you-name').textContent = name;
+
+    supabaseClient.from('sessions').select('seen').eq('name', name).maybeSingle().then(function(res){
+      var remoteSeen = (res.data && res.data.seen) || {};
+      if (hasLinkedBefore){
+        // Already tied to some account before (first login, or a switch) — this name's
+        // own record is the source of truth, don't drag along another identity's progress.
+        seen = Object.assign({}, remoteSeen);
+      } else {
+        // Very first login on this browser — carry over whatever was explored anonymously.
+        Object.keys(remoteSeen).forEach(function(id){ seen[id] = true; });
+      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seen)); } catch(e){}
+      repaintAllTiles();
+      syncProgress();
+    });
+
+    if (knownPlayers.indexOf(name) === -1) knownPlayers.unshift(name);
+    renderOnlineList();
+    trackPresence(name);
+  }
+
+  document.getElementById('session-login').addEventListener('submit', function(e){
+    e.preventDefault();
+    loginAs(document.getElementById('session-name-input').value);
+  });
+  document.getElementById('session-switch').addEventListener('click', function(){
+    try { localStorage.removeItem(SESSION_NAME_KEY); } catch(e){}
+    sessionName = null;
+    untrackPresence();
+    seen = {};
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(seen)); } catch(e){}
+    repaintAllTiles();
+    document.getElementById('session-active').hidden = true;
+    document.getElementById('session-login').hidden = false;
+    var input = document.getElementById('session-name-input');
+    input.value = '';
+    input.focus();
+  });
+
+  startPresence();
+  loadKnownPlayers();
+
+  var savedName = null;
+  try { savedName = localStorage.getItem(SESSION_NAME_KEY); } catch(e){}
+  if (savedName) loginAs(savedName);
+
+  var WELCOME_SEEN_KEY = 'uaExploreWelcomeSeen';
+  var welcomeModal = document.getElementById('welcome-modal');
+
+  function closeWelcomeModal(){
+    welcomeModal.classList.remove('is-open');
+    try { localStorage.setItem(WELCOME_SEEN_KEY, 'true'); } catch(e){}
+    setTimeout(function(){ welcomeModal.hidden = true; }, reduceMotion ? 0 : 250);
+  }
+
+  document.getElementById('welcome-login-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = document.getElementById('welcome-name-input').value;
+    if (!name.trim()) return;
+    loginAs(name);
+    closeWelcomeModal();
+  });
+  document.getElementById('welcome-skip').addEventListener('click', closeWelcomeModal);
+  welcomeModal.addEventListener('click', function(e){ if (e.target === welcomeModal) closeWelcomeModal(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && welcomeModal.classList.contains('is-open')) closeWelcomeModal();
+  });
+
+  var welcomeSeen = false;
+  try { welcomeSeen = localStorage.getItem(WELCOME_SEEN_KEY) === 'true'; } catch(e){}
+  if (!savedName && !welcomeSeen){
+    welcomeModal.hidden = false;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ welcomeModal.classList.add('is-open'); });
+    });
+  }
+
   var overlay = document.getElementById('overlay');
   var overlayInner = document.getElementById('overlay-inner');
   var galleryTrack = document.getElementById('gallery-track');
@@ -742,6 +1053,7 @@ button{font-family:inherit;}
       pdot.classList.remove('is-pop'); void pdot.offsetWidth; pdot.classList.add('is-pop');
     }
     updateProgressUI();
+    syncProgress();
   }
 
   function openBlock(i, originEl){
