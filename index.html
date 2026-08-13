@@ -116,6 +116,18 @@ button{font-family:inherit;}
 }
 .chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:6px;opacity:.4;}
 .online-chip.is-online .chip-dot{opacity:1;box-shadow:0 0 0 3px color-mix(in srgb, var(--chip) 25%, transparent);}
+@keyframes chipPopIn{
+  0%{transform:scale(.4);opacity:0;}
+  55%{transform:scale(1.18);opacity:1;}
+  75%{transform:scale(.94);}
+  100%{transform:scale(1);}
+}
+@keyframes chipGlowRing{
+  0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--chip) 55%, transparent);}
+  100%{box-shadow:0 0 0 14px color-mix(in srgb, var(--chip) 0%, transparent);}
+}
+.online-chip.just-arrived{animation:chipPopIn .55s cubic-bezier(.34,1.56,.64,1) both;}
+.online-chip.just-arrived .chip-dot{animation:chipGlowRing 1s ease-out .1s;}
 .online-chip.c0{--chip:var(--gold);}
 .online-chip.c1{--chip:var(--forest);}
 .online-chip.c2{--chip:var(--terracotta);}
@@ -262,6 +274,8 @@ button{font-family:inherit;}
   .gallery-track{transition:none;}
   .welcome-modal{transition:opacity .15s ease;}
   .welcome-card{transition:opacity .15s ease;transform:none !important;}
+  .online-chip.just-arrived{animation:none;}
+  .online-chip.just-arrived .chip-dot{animation:none;}
 }
 </style>
 </head>
@@ -1175,6 +1189,7 @@ button{font-family:inherit;}
 
   var KNOWN_PLAYERS_LIMIT = 30;
   var onlineNames = new Set();
+  var previousOnlineNames = new Set();
   var knownPlayers = [];
 
   function renderOnlineList(){
@@ -1187,6 +1202,7 @@ button{font-family:inherit;}
 
     if (!all.length){
       labelEl.textContent = 'No one has explored yet — be the first';
+      previousOnlineNames = new Set(onlineNames);
       return;
     }
     all.sort(function(a, b){
@@ -1198,14 +1214,16 @@ button{font-family:inherit;}
     labelEl.textContent = onlineCount + ' online · ' + all.length + ' explored so far:';
     all.forEach(function(n){
       var isOn = onlineNames.has(n);
+      var justArrived = isOn && !previousOnlineNames.has(n);
       var chip = document.createElement('span');
-      chip.className = 'online-chip ' + colorClassFor(n) + (isOn ? ' is-online' : ' is-offline');
+      chip.className = 'online-chip ' + colorClassFor(n) + (isOn ? ' is-online' : ' is-offline') + (justArrived ? ' just-arrived' : '');
       var dot = document.createElement('span');
       dot.className = 'chip-dot';
       chip.appendChild(dot);
       chip.appendChild(document.createTextNode(n));
       chipsEl.appendChild(chip);
     });
+    previousOnlineNames = new Set(onlineNames);
   }
 
   function loadKnownPlayers(){
