@@ -138,8 +138,8 @@ button{font-family:inherit;}
 .overlay-inner.animate > *:nth-child(7){animation-delay:.38s;}
 
 .gallery{position:relative;background:var(--soil);border-radius:2px;}
-.gallery-track{display:flex;overflow:hidden;aspect-ratio:4/3;transition:transform .38s cubic-bezier(.4,0,.2,1);}
-.gallery-track img{width:100%;height:100%;object-fit:cover;flex:none;}
+.gallery-track{display:flex;overflow:hidden;height:min(70vh,560px);transition:transform .38s cubic-bezier(.4,0,.2,1);}
+.gallery-track img{width:100%;height:100%;object-fit:contain;background:var(--soil);flex:none;}
 .gallery-placeholder{
   width:100%;height:100%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   background:linear-gradient(160deg, var(--accent), var(--soil));color:rgba(255,255,255,.85);
