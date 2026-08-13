@@ -220,9 +220,17 @@ button{font-family:inherit;}
 .gallery.has-many .gallery-nav{display:flex;}
 .gallery-nav.prev{left:12px;}
 .gallery-nav.next{right:12px;}
-.gallery-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:5;}
-.gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(240,228,208,.35);}
-.gallery-dots span.is-active{background:var(--gold);}
+.gallery-thumbs{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.gallery-thumbs[hidden]{display:none;}
+.gallery-thumb{
+  width:64px;height:44px;border-radius:5px;overflow:hidden;cursor:pointer;flex:none;
+  border:2px solid transparent;opacity:.5;background:var(--soil);padding:0;
+  transition:opacity .15s ease,border-color .15s ease,transform .1s ease;
+}
+.gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.gallery-thumb:hover{opacity:.8;}
+.gallery-thumb.is-active{opacity:1;border-color:var(--gold);}
+.gallery-thumb:active{transform:scale(.94);}
 
 .overlay-eyebrow{margin-top:26px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
 .overlay-title{color:#FBF3E7;font-size:clamp(26px,4.5vw,36px);margin-top:10px;}
@@ -376,8 +384,8 @@ button{font-family:inherit;}
       </div>
       <button class="gallery-nav prev" aria-label="Previous photo">&#8249;</button>
       <button class="gallery-nav next" aria-label="Next photo">&#8250;</button>
-      <div class="gallery-dots" id="gallery-dots"></div>
     </div>
+    <div class="gallery-thumbs" id="gallery-thumbs"></div>
     <p class="overlay-eyebrow" id="overlay-eyebrow"></p>
     <h3 class="overlay-title" id="overlay-title"></h3>
     <ul class="overlay-facts" id="overlay-facts"></ul>
@@ -1369,14 +1377,14 @@ button{font-family:inherit;}
   var overlayInner = document.getElementById('overlay-inner');
   var galleryEl = document.getElementById('gallery');
   var galleryTrack = document.getElementById('gallery-track');
-  var galleryDots = document.getElementById('gallery-dots');
+  var galleryThumbs = document.getElementById('gallery-thumbs');
   var photoIndex = 0;
   var currentPhotos = [];
 
   function renderGallery(photos, accentHex){
     currentPhotos = photos;
     galleryTrack.innerHTML = '';
-    galleryDots.innerHTML = '';
+    galleryThumbs.innerHTML = '';
     photos.forEach(function(p){
       if (p.placeholder){
         var ph = document.createElement('div');
@@ -1391,18 +1399,29 @@ button{font-family:inherit;}
       }
     });
     galleryEl.classList.toggle('has-many', photos.length > 1);
-    photos.forEach(function(_, i){
-      var d = document.createElement('span');
-      if (i === 0) d.classList.add('is-active');
-      galleryDots.appendChild(d);
+    galleryThumbs.hidden = photos.length <= 1;
+    photos.forEach(function(p, i){
+      var thumb = document.createElement('button');
+      thumb.type = 'button';
+      thumb.className = 'gallery-thumb' + (i === 0 ? ' is-active' : '');
+      thumb.setAttribute('aria-label', 'Show photo ' + (i + 1) + ' of ' + photos.length);
+      if (p.placeholder){
+        thumb.style.background = 'linear-gradient(160deg, ' + accentHex + ', var(--soil))';
+      } else {
+        var timg = document.createElement('img');
+        timg.src = p.src; timg.alt = '';
+        thumb.appendChild(timg);
+      }
+      thumb.addEventListener('click', function(){ goToPhoto(i - photoIndex); });
+      galleryThumbs.appendChild(thumb);
     });
     photoIndex = 0;
     positionGallery();
   }
   function positionGallery(){
     galleryTrack.style.transform = 'translateX(' + (-100 * photoIndex) + '%)';
-    Array.prototype.forEach.call(galleryDots.children, function(d, i){
-      d.classList.toggle('is-active', i === photoIndex);
+    Array.prototype.forEach.call(galleryThumbs.children, function(t, i){
+      t.classList.toggle('is-active', i === photoIndex);
     });
   }
   function goToPhoto(delta){
