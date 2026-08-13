@@ -146,17 +146,6 @@ button{font-family:inherit;}
 }
 .gallery-placeholder .icon{font-size:34px;}
 .gallery-placeholder .label{font-size:13px;font-weight:700;letter-spacing:.04em;}
-.gallery-nav{
-  position:absolute;top:50%;transform:translateY(-50%);background:rgba(21,16,11,.55);border:none;
-  color:#F0E4D0;width:42px;height:42px;border-radius:50%;font-size:20px;cursor:pointer;display:none;
-  align-items:center;justify-content:center;
-}
-.gallery.has-many .gallery-nav{display:flex;}
-.gallery-nav.prev{left:12px;}
-.gallery-nav.next{right:12px;}
-.gallery-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;}
-.gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(240,228,208,.35);}
-.gallery-dots span.is-active{background:var(--gold);}
 
 .overlay-eyebrow{margin-top:26px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
 .overlay-title{color:#FBF3E7;font-size:clamp(26px,4.5vw,36px);margin-top:10px;}
@@ -166,13 +155,6 @@ button{font-family:inherit;}
 .overlay-detail{margin-top:16px;font-size:16px;line-height:1.65;color:#F0E4D0;}
 .overlay-tip{margin-top:16px;font-size:13.5px;color:var(--forest);font-weight:700;background:rgba(91,130,100,.14);display:inline-block;padding:7px 12px;}
 .overlay-tip[hidden]{display:none;}
-.overlay-next{
-  margin-top:34px;display:inline-flex;align-items:center;gap:8px;background:var(--terracotta);color:#FBF3E7;
-  border:none;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer;font-family:'PT Sans',sans-serif;
-  transition:background .15s ease,transform .1s ease;
-}
-.overlay-next:hover{background:var(--gold);}
-.overlay-next:active{transform:scale(.97);}
 
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -247,16 +229,12 @@ button{font-family:inherit;}
   <div class="overlay-inner" id="overlay-inner">
     <div class="gallery" id="gallery">
       <div class="gallery-track" id="gallery-track"></div>
-      <button class="gallery-nav prev" aria-label="Previous photo">&#8249;</button>
-      <button class="gallery-nav next" aria-label="Next photo">&#8250;</button>
-      <div class="gallery-dots" id="gallery-dots"></div>
     </div>
     <p class="overlay-eyebrow" id="overlay-eyebrow"></p>
     <h3 class="overlay-title" id="overlay-title"></h3>
     <ul class="overlay-facts" id="overlay-facts"></ul>
     <p class="overlay-detail" id="overlay-detail"></p>
     <p class="overlay-tip" id="overlay-tip" hidden></p>
-    <button class="overlay-next" id="overlay-next" type="button">Next block →</button>
   </div>
 </div>
 
@@ -272,19 +250,19 @@ button{font-family:inherit;}
   var LAND = [
     {id:'land-01',cat:'land',catLabel:'Land, Symbols & Places',title:'Capital, People & Regions',
       photos:[{src:'images/lavra_belltower.jpg',alt:'Great Lavra Bell Tower, Kyiv'}],
-      facts:['Kyiv, on the Dnipro River','38–41 million people — give or take','24 oblasts, plus Crimea','Independent since 1991'],
-      detail:'Nobody has a clean number for the population anymore — not carelessness, just the toll of a hard decade. The map, at least, hasn’t moved: 24 oblasts, same as it’s been for years, plus Crimea’s separate status.'},
+      facts:['Kyiv, on the Dnipro River','38–41 million people — give or take','24 oblasts (regions), plus Crimea','Independent since 1991'],
+      detail:'Nobody has a clean number for the population anymore — not carelessness, just the toll of a hard decade. The map, at least, hasn’t moved: 24 oblasts (regions), same as it’s been for years, plus Crimea’s separate status.'},
     {id:'land-02',cat:'land',catLabel:'Land, Symbols & Places',title:'The Landscape — Steppe to Carpathians',
-      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'},{src:'images/transition_synevyr_lake.jpg',alt:'A Carpathian lake'}],
+      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'}],
       facts:['Flat steppe in the south','Dense forest up north','The Carpathians climbing the west'],
       detail:'Drive west long enough and the horizon just stops being flat. That’s the Carpathians announcing themselves — the highest ground in the country, and the payoff for the whole trip.',
       tip:'Where to go: the Carpathians, up to Mount Hoverla (2,061 m)'},
     {id:'land-03',cat:'land',catLabel:'Land, Symbols & Places',title:'Chornozem — the Black Soil',
-      photos:[{src:'images/wheat_field.jpg',alt:'Wheat field, Lviv Oblast'},{src:'images/closing_wheat.jpg',alt:'Wheat close up'}],
+      photos:[{src:'images/wheat_field.jpg',alt:'Wheat field, Lviv Oblast (region)'}],
       facts:['Some of the richest soil on Earth','The real reason for “breadbasket of Europe”'],
       detail:'Chornozem isn’t a nickname, it’s a soil type — dark, humus-rich, absurdly fertile — and it covers enough of the country that Ukrainian wheat still moves world markets.'},
     {id:'land-04',cat:'land',catLabel:'Land, Symbols & Places',title:'Kyivan Rus & the Tryzub',
-      photos:[{src:'images/tryzub_artifact.jpg',alt:'10th-century tryzub brick artifact'},{src:'images/history_sophia.jpg',alt:'St. Sophia Cathedral, Kyiv'}],
+      photos:[{src:'images/tryzub_artifact.jpg',alt:'10th-century tryzub brick artifact'}],
       facts:['Kyivan Rus, 9th–13th century','Where the tryzub begins'],
       detail:'This brick is about a thousand years old, and that three-pronged mark carved into it started as nothing grander than a prince’s personal seal — Volodymyr the Great’s, among others — long before anyone called it a national symbol.',
       tip:'Where to go: St. Sophia Cathedral, the Kyiv Pechersk Lavra — both UNESCO-listed'},
@@ -310,7 +288,7 @@ button{font-family:inherit;}
       facts:['Stone and ceramic versions trace to Kyivan Rus','The technique: wax, dye, repeat'],
       detail:'It’s batik, essentially — wax drawn on in careful lines, colour built up layer by layer, lightest first, and the wax finally melted away to reveal a pattern that was there the whole time, just hidden.'},
     {id:'land-11',cat:'land',catLabel:'Land, Symbols & Places',title:'Pysanky — Color & the Giant Egg',
-      photos:[{src:'images/pysanka_vegreville.jpg',alt:'The giant pysanka monument, Vegreville'},{src:'images/kosiv_ceramics.jpg',alt:'Kosiv painted ceramics'},{src:'images/kolomyia_pysanka_museum.jpg',alt:'The Pysanka Museum, Kolomyia'}],
+      photos:[{src:'images/pysanka_vegreville.jpg',alt:'The giant pysanka monument, Vegreville'}],
       facts:['Red for life, yellow for harvest, green for spring','Handed out at Easter','Its own Canadian coin since 2016'],
       detail:'Every colour is already telling the story before anyone opens their mouth — and Vegreville, Canada took that literally, building a pysanka the size of a small building in 1974. Still the largest one on Earth.',
       tip:'Where to go: Kosiv, in the Hutsul Carpathians'},
@@ -323,8 +301,8 @@ button{font-family:inherit;}
       facts:['A peninsula where Carpathian-style mountains meet the Black Sea','Long home to the Crimean Tatars, one of Ukraine’s oldest minority communities'],
       detail:'It’s one of the few places in the country where you can stand in the mountains and see the sea from the same ridge. The Crimean Tatars have called it home for centuries — their language, cuisine, and crafts are as much a part of this landscape as the coastline itself.'},
     {id:'land-14',cat:'land',catLabel:'Land, Symbols & Places',title:'Oleshky Sands — Ukraine’s Own Desert',
-      photos:[{src:'images/oleshky_sands.jpg',alt:'Oleshky Sands dune landscape, Kherson Oblast'}],
-      facts:['A genuine sand-dune desert in Kherson Oblast','Sometimes nicknamed the “Ukrainian Sahara”'],
+      photos:[{src:'images/oleshky_sands.jpg',alt:'Oleshky Sands dune landscape, Kherson Oblast (region)'}],
+      facts:['A genuine sand-dune desert in Kherson Oblast (region)','Sometimes nicknamed the “Ukrainian Sahara”'],
       detail:'Steppe, forest, mountains, coastline — and then, improbably, dunes you could film a desert movie in. It’s a small patch as deserts go, but it’s real sand, real wind-carved ridges, in a country most people picture as entirely green and gold.'},
     {id:'land-15',cat:'land',catLabel:'Land, Symbols & Places',title:'Hoverla — the Roof of the Country',
       photos:[{src:'images/geography_hoverla.jpg',alt:'Mount Hoverla'}],
@@ -339,7 +317,7 @@ button{font-family:inherit;}
       facts:['2,022 metres, the third-highest peak in the country','Topped by the ruins of a 1930s observatory, nicknamed the “White Elephant”'],
       detail:'Long before it was a hiking landmark, the summit hosted a full astronomical and meteorological observatory — abandoned since the Second World War, its stone ruins nicknamed the “White Elephant,” now just a dramatic backdrop for anyone who makes the climb.'},
     {id:'land-16',cat:'land',catLabel:'Land, Symbols & Places',title:'Every Landscape, One Country',
-      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'},{src:'images/geography_hoverla.jpg',alt:'The Carpathians, near Mount Hoverla'},{src:'images/carpathian_highlands.jpg',alt:'Carpathian highlands'}],
+      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'}],
       facts:['Flat steppe in the south and east','Mountains climbing the west','Forests, marshland, a sea coast, and even a desert, all inside one border'],
       detail:'Drive across Ukraine and the scenery genuinely doesn’t repeat itself — steppe gives way to farmland, farmland to forest, forest to mountains, and eventually to a coastline warm enough to swim in. Very few countries this size pack in this much variety.'},
     {id:'land-17',cat:'land',catLabel:'Land, Symbols & Places',title:'Kharkiv — the First Capital',
@@ -352,7 +330,7 @@ button{font-family:inherit;}
       detail:'Chernihiv doesn’t get the tourist traffic Kyiv or Lviv do, which is almost the point — its 11th-century churches have had centuries of relative quiet to just stand there, largely undisturbed.'},
     {id:'land-19',cat:'land',catLabel:'Land, Symbols & Places',title:'The Wooden Churches of the Carpathians',
       photos:[{src:'images/yasinia_wooden_church.jpg',alt:'A wooden Hutsul church, Yasinia'}],
-      facts:['Tall wooden tserkvas, some built without a single nail','UNESCO World Heritage-listed since 2013, shared with Poland'],
+      facts:['Tall wooden churches, some built without a single nail','UNESCO World Heritage-listed since 2013, shared with Poland'],
       detail:'Each region built them a little differently — steep-roofed here, tiered like a pagoda there — but all of them prove the same point: a determined carpenter and enough larch wood can raise something that outlasts stone.'}
   ];
 
@@ -489,9 +467,9 @@ button{font-family:inherit;}
       facts:['Small pan-fried cottage-cheese pancakes','A breakfast staple, usually with jam or sour cream'],
       detail:'It’s the kind of dish every household makes slightly differently and every household insists their version is the right one — sweeter batter, denser batter, more vanilla, less. There’s no consensus, and nobody’s trying to reach one.'},
     {id:'food-11',cat:'food',catLabel:'Food & Drink',title:'Banosh — the Hutsul Mountain Classic',
-      photos:[{src:'images/banosh-v-multyvarczi.jpg',alt:'A bowl of banosh with bryndza cheese'}],
-      facts:['A creamy cornmeal porridge from the Hutsul Carpathians','Topped with bryndza sheep cheese and often bacon cracklings'],
-      detail:'It belongs squarely to the Ukrainian Carpathians, not a borrowed dish — though cornmeal porridges like it turn up under other names across the wider Carpathian and Balkan region, the way borscht has cousins in half of Eastern Europe. The bryndza on top is what makes it distinctly Hutsul.'},
+      photos:[{src:'images/banosh-v-multyvarczi.jpg',alt:'A bowl of banosh with sheep cheese'}],
+      facts:['A creamy cornmeal porridge from the Hutsul Carpathians','Topped with sheep cheese and often bacon cracklings'],
+      detail:'It belongs squarely to the Ukrainian Carpathians, not a borrowed dish — though cornmeal porridges like it turn up under other names across the wider Carpathian and Balkan region, the way borscht has cousins in half of Eastern Europe. The sheep cheese on top is what makes it distinctly Hutsul.'},
     {id:'food-12',cat:'food',catLabel:'Food & Drink',title:'Kholodets — Dinner That Sets Like Jelly',
       photos:[{src:'images/svino-govyazhij-holodec3.jpg',alt:'Kholodets, meat jelly'}],
       facts:['A savoury meat jelly, made from slow-simmered bone broth','A cold-weather and holiday-table regular'],
@@ -540,7 +518,7 @@ button{font-family:inherit;}
       facts:['2004 — Ruslana, “Wild Dances”','2016 — Jamala, “1944”','2022 — Kalush Orchestra, “Stefania”'],
       detail:'Three very different decades, three very different sounds — Ruslana’s Hutsul-war-drum stage show, Jamala’s haunting ballad, Kalush Orchestra’s hip-hop-meets-sopilka mix — and each time, something unmistakably Ukrainian threaded through the production anyway. That part never changes.'},
     {id:'world-05',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Beyond the Border — the Diaspora',
-      photos:[{src:'images/shevchenko_winnipeg.jpg',alt:'Taras Shevchenko monument, Winnipeg, Manitoba'},{src:'images/diaspora.jpg',alt:'Ukrainian diaspora community festival, Argentina'}],
+      photos:[{src:'images/diaspora.jpg',alt:'Ukrainian diaspora community festival, Argentina'}],
       facts:['Large communities in Canada, going back over a century','Sizeable communities in Argentina and Brazil too'],
       detail:'That Shevchenko monument in Winnipeg from earlier wasn’t a one-off — whole prairie towns in Canada still run Ukrainian churches, dance troupes, and Saturday schools, and the same thread runs quietly through communities in Argentina and Brazil.'},
     {id:'world-06',cat:'world',catLabel:'Arts & Ukraine in the World',title:'One Country, 130-Plus Peoples',
@@ -565,7 +543,7 @@ button{font-family:inherit;}
       detail:'The painting captures Cossacks roaring with laughter while drafting an insult-laden reply to a sultan’s ultimatum — the same freedom-first, unbothered swagger that defined the Zaporozhian Sich centuries earlier.'},
     {id:'world-11',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Oleksandr Dovzhenko — a Founder of World Cinema',
       photos:[{src:'images/dovzhenko_portrait.jpg',alt:'Oleksandr Dovzhenko, 1930s'}],
-      facts:['Born in Chernihiv Oblast in 1894','His 1930 film “Earth” still appears on greatest-films-ever-made lists'],
+      facts:['Born in Chernihiv Oblast (region) in 1894','His 1930 film “Earth” still appears on greatest-films-ever-made lists'],
       detail:'Dovzhenko filmed Ukrainian wheat fields and orchards like sacred ground — long, patient shots that influenced generations of filmmakers who never set foot in the country themselves.'},
     {id:'world-12',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Igor Sikorsky — the Helicopter Started in Kyiv',
       photos:[{src:'images/sikorsky_portrait.jpg',alt:'Igor Sikorsky'}],
@@ -583,7 +561,7 @@ button{font-family:inherit;}
       photos:[{src:'images/grammarly_logo.png',alt:'Grammarly, founded by Ukrainians'}],
       facts:['Founded by three Ukrainians, first built in Kyiv','Now used by tens of millions of people worldwide'],
       detail:'One of the most-installed writing tools on the planet started as a side project among Kyiv university friends who were tired of fixing the same grammar mistakes over and over.'},
-    {id:'world-16',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Jan Koum — from Kyiv Oblast to WhatsApp',
+    {id:'world-16',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Jan Koum — from Kyiv Oblast (region) to WhatsApp',
       photos:[{src:'images/koum_portrait.jpg',alt:'Jan Koum, WhatsApp co-founder'}],
       facts:['Born near Kyiv in 1976','Co-founded WhatsApp, later sold to Facebook for $19 billion'],
       detail:'He grew up without a landline phone in his childhood village outside Kyiv — an odd detail to end up attached to a co-founder of one of the most-used communication apps on Earth.'},
@@ -630,7 +608,7 @@ button{font-family:inherit;}
       facts:['Mount Hoverla, the country’s highest point','The top draw for hiking in Ukraine'],
       detail:'This is the one landscape every itinerary should make room for — ridge trails, mountain huts, and views that make it obvious why this range anchors so much of the country’s folklore.'},
     {id:'places-02',cat:'places',catLabel:'Places to Visit',title:'Kyiv — Golden Domes and a Thousand Years of Layers',
-      photos:[{src:'images/lavra_belltower.jpg',alt:'Kyiv'},{src:'images/kyiv_st_michaels.jpg',alt:'St. Michael’s Golden-Domed Monastery, Kyiv'}],
+      photos:[{src:'images/lavra_belltower.jpg',alt:'Kyiv'}],
       facts:['St. Sophia Cathedral and the Kyiv Pechersk Lavra, both UNESCO-listed','A capital rebuilt and renewed for over a thousand years'],
       detail:'You could spend a week in the two UNESCO sites alone — Sophia’s mosaics and the Lavra’s underground cave monasteries are centuries older than most of what tourists usually cross oceans to see.'},
     {id:'places-03',cat:'places',catLabel:'Places to Visit',title:'Kamianets-Podilskyi — a Fortress on an Island of Rock',
@@ -638,12 +616,12 @@ button{font-family:inherit;}
       facts:['One of the finest surviving fortresses of the Cossack era','Built on a canyon loop carved by the Smotrych River'],
       detail:'The river did most of the defensive work for free, carving a natural moat around the old town before anyone laid a single stone. The fortress just finished what the canyon started.'},
     {id:'places-04',cat:'places',catLabel:'Places to Visit',title:'Lviv — Coffee, Cobblestones, Character',
-      photos:[{src:'images/lviv_townhall.jpg',alt:'Lviv'},{src:'images/lviv_rynok_square.jpg',alt:'Rynok Square, Lviv'}],
+      photos:[{src:'images/lviv_townhall.jpg',alt:'Lviv'}],
       facts:['The cultural capital of the west','A UNESCO-listed historic centre'],
       detail:'Lviv never quite feels like the rest of the country — more café culture, more Austro-Hungarian rooftops — and that’s exactly why it’s worth the detour.'},
     {id:'places-05',cat:'places',catLabel:'Places to Visit',title:'Kosiv & the Hutsul Region — Where the Crafts Live',
       photos:[{src:'images/kosiv_ceramics.jpg',alt:'Kosiv'}],
-      facts:['The Carpathian heartland of pysanka-making and folk craft','Home to the Hutsul culture behind the trembita and painted ceramics'],
+      facts:['The Carpathian heartland of pysanka-making and folk craft','Home to the Hutsuls (a Carpathian highlander people) and their trembita and painted ceramics'],
       detail:'This is where a lot of the traditions on this page still get made, not just displayed — workshops you can walk into, craftspeople happy to show the wax-and-dye process in person.'},
     {id:'places-06',cat:'places',catLabel:'Places to Visit',title:'Odesa — Sea, Humour, and a Very Particular Accent',
       photos:[{src:'images/odesa_opera.jpg',alt:'Odesa Opera and Ballet Theatre'}],
@@ -737,42 +715,22 @@ button{font-family:inherit;}
 
   var overlay = document.getElementById('overlay');
   var overlayInner = document.getElementById('overlay-inner');
-  var galleryEl = document.getElementById('gallery');
   var galleryTrack = document.getElementById('gallery-track');
-  var galleryDots = document.getElementById('gallery-dots');
-  var currentIndex = -1;
-  var photoIndex = 0;
 
   function renderGallery(photos, accentHex){
     galleryTrack.innerHTML = '';
-    galleryDots.innerHTML = '';
-    photos.forEach(function(p){
-      if (p.placeholder){
-        var ph = document.createElement('div');
-        ph.className = 'gallery-placeholder';
-        ph.style.setProperty('--accent', accentHex);
-        ph.innerHTML = '<span class="icon">📷</span><span class="label">Photo coming soon</span>';
-        galleryTrack.appendChild(ph);
-      } else {
-        var img = document.createElement('img');
-        img.src = p.src; img.alt = p.alt || '';
-        galleryTrack.appendChild(img);
-      }
-    });
-    galleryEl.classList.toggle('has-many', photos.length > 1);
-    photos.forEach(function(_, i){
-      var d = document.createElement('span');
-      if (i === 0) d.classList.add('is-active');
-      galleryDots.appendChild(d);
-    });
-    photoIndex = 0;
-    positionGallery();
-  }
-  function positionGallery(){
-    galleryTrack.style.transform = 'translateX(' + (-100 * photoIndex) + '%)';
-    Array.prototype.forEach.call(galleryDots.children, function(d, i){
-      d.classList.toggle('is-active', i === photoIndex);
-    });
+    var p = photos[0];
+    if (p.placeholder){
+      var ph = document.createElement('div');
+      ph.className = 'gallery-placeholder';
+      ph.style.setProperty('--accent', accentHex);
+      ph.innerHTML = '<span class="icon">📷</span><span class="label">Photo coming soon</span>';
+      galleryTrack.appendChild(ph);
+    } else {
+      var img = document.createElement('img');
+      img.src = p.src; img.alt = p.alt || '';
+      galleryTrack.appendChild(img);
+    }
   }
 
   function markSeen(i){
@@ -791,7 +749,6 @@ button{font-family:inherit;}
   }
 
   function openBlock(i, originEl){
-    currentIndex = i;
     var b = BLOCKS[i];
     var accentHex = catColorHex[b.cat];
     renderGallery(b.photos, accentHex);
@@ -851,36 +808,6 @@ button{font-family:inherit;}
   document.addEventListener('keydown', function(e){
     if (!overlay.classList.contains('is-open')) return;
     if (e.key === 'Escape') closeOverlay();
-    if (e.key === 'ArrowRight'){
-      var photos = BLOCKS[currentIndex].photos;
-      if (photoIndex < photos.length - 1){ photoIndex++; positionGallery(); }
-    }
-    if (e.key === 'ArrowLeft'){
-      if (photoIndex > 0){ photoIndex--; positionGallery(); }
-    }
-  });
-  document.querySelector('.gallery-nav.next').addEventListener('click', function(){
-    var photos = BLOCKS[currentIndex].photos;
-    if (photoIndex < photos.length - 1){ photoIndex++; positionGallery(); }
-  });
-  document.querySelector('.gallery-nav.prev').addEventListener('click', function(){
-    if (photoIndex > 0){ photoIndex--; positionGallery(); }
-  });
-
-  var touchStartX = null;
-  galleryEl.addEventListener('touchstart', function(e){ touchStartX = e.touches[0].clientX; });
-  galleryEl.addEventListener('touchend', function(e){
-    if (touchStartX === null) return;
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    var photos = BLOCKS[currentIndex].photos;
-    if (dx < -40 && photoIndex < photos.length - 1){ photoIndex++; positionGallery(); }
-    if (dx > 40 && photoIndex > 0){ photoIndex--; positionGallery(); }
-    touchStartX = null;
-  });
-
-  document.getElementById('overlay-next').addEventListener('click', function(){
-    var next = (currentIndex + 1) % BLOCKS.length;
-    openBlock(next, null);
   });
 
   overlay.addEventListener('click', function(e){ if (e.target === overlay) closeOverlay(); });
