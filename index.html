@@ -158,18 +158,27 @@ button{font-family:inherit;}
 
 /* ---------- OVERLAY ---------- */
 .overlay{
-  position:fixed;inset:0;background:rgba(21,16,11,.97);z-index:200;overflow-y:auto;
+  position:fixed;inset:0;background:rgba(21,16,11,.90);z-index:200;overflow-y:auto;
   opacity:0;pointer-events:none;transform:scale(.94);
   transition:opacity .32s ease, transform .32s cubic-bezier(.22,.9,.32,1);
 }
 .overlay.is-open{opacity:1;pointer-events:auto;transform:none;}
 .overlay-inner{max-width:760px;margin:0 auto;padding:60px 20px 90px;}
 .overlay-close{
-  position:fixed;top:20px;right:24px;background:none;border:1px solid rgba(240,228,208,.35);
-  color:#F0E4D0;width:44px;height:44px;font-size:26px;line-height:1;cursor:pointer;border-radius:50%;z-index:2;
-  transition:border-color .15s ease,color .15s ease;
+  position:fixed;top:20px;right:24px;background:rgba(21,16,11,.75);border:2px solid rgba(240,228,208,.65);
+  color:#F0E4D0;width:46px;height:46px;font-size:26px;line-height:1;cursor:pointer;border-radius:50%;z-index:210;
+  box-shadow:0 6px 18px -6px rgba(0,0,0,.5);
+  transition:border-color .15s ease,color .15s ease,background .15s ease;
 }
-.overlay-close:hover{border-color:var(--gold);color:var(--gold);}
+.overlay-close:hover{border-color:var(--gold);color:var(--gold);background:rgba(21,16,11,.92);}
+.overlay-close-hint{
+  position:fixed;top:31px;right:78px;z-index:210;color:#D8C6A9;font-size:12.5px;font-weight:700;
+  font-family:'PT Sans',sans-serif;background:rgba(21,16,11,.75);padding:7px 12px;border-radius:20px;
+  pointer-events:none;white-space:nowrap;
+}
+@media (max-width:640px){
+  .overlay-close-hint{display:none;}
+}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 .overlay-inner.animate > *{animation:fadeUp .5s ease both;}
@@ -182,7 +191,8 @@ button{font-family:inherit;}
 .overlay-inner.animate > *:nth-child(7){animation-delay:.38s;}
 
 .gallery{position:relative;background:var(--soil);border-radius:2px;}
-.gallery-track{display:flex;overflow:hidden;height:min(70vh,560px);transition:transform .38s cubic-bezier(.4,0,.2,1);}
+.gallery-viewport{overflow:hidden;height:min(70vh,560px);}
+.gallery-track{display:flex;height:100%;transition:transform .38s cubic-bezier(.4,0,.2,1);}
 .gallery-track img{width:100%;height:100%;object-fit:contain;background:var(--soil);flex:none;}
 .gallery-placeholder{
   width:100%;height:100%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
@@ -190,6 +200,17 @@ button{font-family:inherit;}
 }
 .gallery-placeholder .icon{font-size:34px;}
 .gallery-placeholder .label{font-size:13px;font-weight:700;letter-spacing:.04em;}
+.gallery-nav{
+  position:absolute;top:50%;transform:translateY(-50%);background:rgba(21,16,11,.55);border:none;
+  color:#F0E4D0;width:42px;height:42px;border-radius:50%;font-size:20px;cursor:pointer;display:none;
+  align-items:center;justify-content:center;z-index:5;
+}
+.gallery.has-many .gallery-nav{display:flex;}
+.gallery-nav.prev{left:12px;}
+.gallery-nav.next{right:12px;}
+.gallery-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:5;}
+.gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(240,228,208,.35);}
+.gallery-dots span.is-active{background:var(--gold);}
 
 .overlay-eyebrow{margin-top:26px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
 .overlay-title{color:#FBF3E7;font-size:clamp(26px,4.5vw,36px);margin-top:10px;}
@@ -263,12 +284,12 @@ button{font-family:inherit;}
     <div><img src="images/title_hook_sunflower.jpg" alt=""></div>
     <div><img src="images/history_sophia.jpg" alt=""></div>
     <div><img src="images/symbols_lviv.jpg" alt=""></div>
-    <div><img src="images/pysanka.jpg" alt=""></div>
-    <div><img src="images/geography_hoverla.jpg" alt=""></div>
-    <div><img src="images/lviv_townhall.jpg" alt=""></div>
-    <div><img src="images/kamianets_fortress.jpg" alt=""></div>
-    <div><img src="images/wheat_field.jpg" alt=""></div>
-    <div><img src="images/steppe.jpg" alt=""></div>
+    <div><img src="images/46-land-pysanka.jpg" alt=""></div>
+    <div><img src="images/71-land-geography_hoverla.jpg" alt=""></div>
+    <div><img src="images/24-places-lviv_townhall.jpg" alt=""></div>
+    <div><img src="images/18-places-kamianets_fortress.jpg" alt=""></div>
+    <div><img src="images/13-land-wheat_field.jpg" alt=""></div>
+    <div><img src="images/7-land-steppe.jpg" alt=""></div>
   </div>
   <div class="hero-scrim"></div>
   <div class="hero-content">
@@ -333,9 +354,15 @@ button{font-family:inherit;}
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
   <button class="overlay-close" type="button" aria-label="Close">&times;</button>
+  <p class="overlay-close-hint">Tap outside to close</p>
   <div class="overlay-inner" id="overlay-inner">
     <div class="gallery" id="gallery">
-      <div class="gallery-track" id="gallery-track"></div>
+      <div class="gallery-viewport">
+        <div class="gallery-track" id="gallery-track"></div>
+      </div>
+      <button class="gallery-nav prev" aria-label="Previous photo">&#8249;</button>
+      <button class="gallery-nav next" aria-label="Next photo">&#8250;</button>
+      <div class="gallery-dots" id="gallery-dots"></div>
     </div>
     <p class="overlay-eyebrow" id="overlay-eyebrow"></p>
     <h3 class="overlay-title" id="overlay-title"></h3>
@@ -365,388 +392,688 @@ button{font-family:inherit;}
 
   var LAND = [
     {id:'land-01',cat:'land',catLabel:'Land, Symbols & Places',title:'Capital, People & Regions',
-      photos:[{src:'images/lavra_belltower.jpg',alt:'Great Lavra Bell Tower, Kyiv'}],
+      photos:[{src:'images/1-land-kyiv_st_michaels.jpg',alt:'St. Michael’s Golden-Domed Monastery, Kyiv'}],
       facts:['Kyiv, on the Dnipro River','38–41 million people — give or take','24 oblasts (regions), plus Crimea','Independent since 1991'],
       detail:'Nobody has a clean number for the population anymore — not carelessness, just the toll of a hard decade. The map, at least, hasn’t moved: 24 oblasts (regions), same as it’s been for years, plus Crimea’s separate status.'},
-    {id:'land-02',cat:'land',catLabel:'Land, Symbols & Places',title:'The Landscape — Steppe to Carpathians',
-      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'}],
-      facts:['Flat steppe in the south','Dense forest up north','The Carpathians climbing the west'],
-      detail:'Drive west long enough and the horizon just stops being flat. That’s the Carpathians announcing themselves — the highest ground in the country, and the payoff for the whole trip.',
+    {id:'land-02',cat:'land',catLabel:'Land, Symbols & Places',title:'Every Landscape, One Country',
+      photos:[{src:'images/7-land-steppe.jpg',alt:'Ukrainian steppe'}],
+      facts:['Flat steppe in the south and east','Mountains climbing the west','Forests, marshland, a sea coast, and even a desert, all inside one border'],
+      detail:'Drive across Ukraine and the scenery genuinely doesn’t repeat itself — steppe gives way to farmland, farmland to forest, forest to mountains, and eventually to a coastline warm enough to swim in. Very few countries this size pack in this much variety.',
       tip:'Where to go: the Carpathians, up to Mount Hoverla (2,061 m)'},
     {id:'land-03',cat:'land',catLabel:'Land, Symbols & Places',title:'Chornozem — the Black Soil',
-      photos:[{src:'images/wheat_field.jpg',alt:'Wheat field, Lviv Oblast (region)'}],
+      photos:[{src:'images/13-land-wheat_field.jpg',alt:'Wheat field, Lviv Oblast (region)'}],
       facts:['Some of the richest soil on Earth','The real reason for “breadbasket of Europe”'],
       detail:'Chornozem isn’t a nickname, it’s a soil type — dark, humus-rich, absurdly fertile — and it covers enough of the country that Ukrainian wheat still moves world markets.'},
     {id:'land-04',cat:'land',catLabel:'Land, Symbols & Places',title:'Kyivan Rus & the Tryzub',
-      photos:[{src:'images/tryzub_artifact.jpg',alt:'10th-century tryzub brick artifact'}],
+      photos:[{src:'images/19-land-tryzub_artifact.jpg',alt:'10th-century tryzub brick artifact'}],
       facts:['Kyivan Rus, 9th–13th century','Where the tryzub begins'],
       detail:'This brick is about a thousand years old, and that three-pronged mark carved into it started as nothing grander than a prince’s personal seal — Volodymyr the Great’s, among others — long before anyone called it a national symbol.',
       tip:'Where to go: St. Sophia Cathedral, the Kyiv Pechersk Lavra — both UNESCO-listed'},
     {id:'land-05',cat:'land',catLabel:'Land, Symbols & Places',title:'The Cossack Era & the Zaporozhian Sich',
-      photos:[{src:'images/khortytsia_cossacks.jpg',alt:'Cossack festival, Khortytsia island'}],
+      photos:[{src:'images/25-land-khortytsia_cossacks.jpg',alt:'Cossack festival, Khortytsia island'}],
       facts:['A self-governing stronghold on the Dnipro','Freedom-first, by design'],
       detail:'The Zaporozhian Sich was running its own affairs on Khortytsia island long before “self-determination” was a phrase anyone needed. This is where the stubborn streak in the Ukrainian character actually starts.'},
     {id:'land-07',cat:'land',catLabel:'Land, Symbols & Places',title:'The Tryzub & the Flag',
-      photos:[{src:'images/truzub.jpg',alt:'The tryzub emblem'}],
+      photos:[{src:'images/31-land-truzub.jpg',alt:'The tryzub emblem'}],
       facts:['A 1,000-year-old emblem','Blue over yellow: sky over wheat','Folk reading: three prongs spelling “ВОЛЯ”'],
       detail:'The flag never needed a redesign — sky over a wheat field, the same landscape this whole page keeps returning to. The tryzub picked up its own legend along the way: read the prongs right, some say, and they spell “ВОЛЯ” — freedom. No historian will back that up. Doesn’t stop anyone believing it anyway.'},
     {id:'land-08',cat:'land',catLabel:'Land, Symbols & Places',title:'The Vyshyvanka — Embroidered Identity',
-      photos:[{src:'images/vyshyvanka_embroidery.jpg',alt:'Ukrainian embroidery, close up'}],
+      photos:[{src:'images/36-land-vyshyvanka_embroidery.jpg',alt:'Ukrainian embroidery, close up'}],
       facts:['A traditional embroidered shirt — no two villages stitch it the same','Pattern and colour once worked almost like a return address'],
       detail:'Cross a valley and the pattern changes completely — that specific. Someone who knows the craft could look at the stitching on a vyshyvanka and place roughly where its wearer was from, a whole geography encoded in thread long before anyone needed a passport to prove it. And it’s not a museum piece: people still wear these on an ordinary Tuesday, not just for the cameras.'},
     {id:'land-09',cat:'land',catLabel:'Land, Symbols & Places',title:'Taras Shevchenko & the Kobzar',
-      photos:[{src:'images/shevchenko_winnipeg.jpg',alt:'Taras Shevchenko monument, Winnipeg, Manitoba'}],
+      photos:[{src:'images/41-land-shevchenko_winnipeg.jpg',alt:'Taras Shevchenko monument, Winnipeg, Manitoba'}],
       facts:['Poet, painter, national icon','Kobzar, the book everyone knows'],
       detail:'Shevchenko matters enough that a monument to him stands outside the Manitoba Legislature in Winnipeg — unveiled in 1961, a century after his death, on the opposite side of the planet from anywhere he ever set foot.',
       tip:'Where to go: Lviv, for the architecture and the coffee'},
     {id:'land-10',cat:'land',catLabel:'Land, Symbols & Places',title:'Pysanky — History & Technique',
-      photos:[{src:'images/pysanka.jpg',alt:'Painted pysanky eggs'}],
+      photos:[{src:'images/46-land-pysanka.jpg',alt:'Painted pysanky eggs'}],
       facts:['Stone and ceramic versions trace to Kyivan Rus','The technique: wax, dye, repeat'],
       detail:'It’s batik, essentially — wax drawn on in careful lines, colour built up layer by layer, lightest first, and the wax finally melted away to reveal a pattern that was there the whole time, just hidden.'},
     {id:'land-11',cat:'land',catLabel:'Land, Symbols & Places',title:'Pysanky — Color & the Giant Egg',
-      photos:[{src:'images/pysanka_vegreville.jpg',alt:'The giant pysanka monument, Vegreville'}],
-      facts:['Red for life, yellow for harvest, green for spring','Handed out at Easter','Its own Canadian coin since 2016'],
-      detail:'Every colour is already telling the story before anyone opens their mouth — and Vegreville, Canada took that literally, building a pysanka the size of a small building in 1974. Still the largest one on Earth.',
-      tip:'Where to go: Kosiv, in the Hutsul Carpathians'},
+      photos:[{src:'images/51-land-pysanka_vegreville.jpg',alt:'The giant pysanka monument, Vegreville'}],
+      facts:['Red for life, yellow for harvest, green for spring','Handed out at Easter','Its own Canadian coin since 2016','Kolomyia’s Pysanka Museum is itself shaped like a giant egg'],
+      detail:'Every colour is already telling the story before anyone opens their mouth — and Vegreville, Canada took that literally, building a pysanka the size of a small building in 1974. Still the largest one on Earth. Kolomyia went a different route: instead of one giant egg, it built an entire museum shaped like one, holding thousands of pysanky inside.',
+      tip:'Where to go: Kosiv, in the Hutsul Carpathians — or the Pysanka Museum in Kolomyia'},
     {id:'land-12',cat:'land',catLabel:'Land, Symbols & Places',title:'The Dnipro — the River That Splits the Country',
-      photos:[{src:'images/flag_dnipro.jpg',alt:'Flag of Ukraine over the city of Dnipro'}],
+      photos:[{src:'images/56-land-flag_dnipro.jpg',alt:'Flag of Ukraine over the city of Dnipro'}],
       facts:['One of Europe’s longest rivers','Splits the country into the historic “Right Bank” and “Left Bank”','Kyiv, Dnipro, and Zaporizhzhia all grew up along it'],
       detail:'Everything west of it got called Right-Bank Ukraine, everything east Left-Bank — a distinction old enough that historians still use it as shorthand. The river doesn’t just run through the map. For centuries, in a lot of ways, it was the map.'},
     {id:'land-13',cat:'land',catLabel:'Land, Symbols & Places',title:'Crimea — Mountains Meeting the Sea',
-      photos:[{src:'images/crimea_mountains.jpg',alt:'Crimean coastline and mountains'}],
+      photos:[{src:'images/61-land-crimea_mountains.jpg',alt:'Crimean coastline and mountains'}],
       facts:['A peninsula where Carpathian-style mountains meet the Black Sea','Long home to the Crimean Tatars, one of Ukraine’s oldest minority communities'],
       detail:'It’s one of the few places in the country where you can stand in the mountains and see the sea from the same ridge. The Crimean Tatars have called it home for centuries — their language, cuisine, and crafts are as much a part of this landscape as the coastline itself.'},
     {id:'land-14',cat:'land',catLabel:'Land, Symbols & Places',title:'Oleshky Sands — Ukraine’s Own Desert',
-      photos:[{src:'images/oleshky_sands.jpg',alt:'Oleshky Sands dune landscape, Kherson Oblast (region)'}],
+      photos:[{src:'images/66-land-oleshky_sands.jpg',alt:'Oleshky Sands dune landscape, Kherson Oblast (region)'}],
       facts:['A genuine sand-dune desert in Kherson Oblast (region)','Sometimes nicknamed the “Ukrainian Sahara”'],
       detail:'Steppe, forest, mountains, coastline — and then, improbably, dunes you could film a desert movie in. It’s a small patch as deserts go, but it’s real sand, real wind-carved ridges, in a country most people picture as entirely green and gold.'},
     {id:'land-15',cat:'land',catLabel:'Land, Symbols & Places',title:'Hoverla — the Roof of the Country',
-      photos:[{src:'images/geography_hoverla.jpg',alt:'Mount Hoverla'}],
+      photos:[{src:'images/71-land-geography_hoverla.jpg',alt:'Mount Hoverla'}],
       facts:['2,061 metres, the highest point in Ukraine','Part of the Chornohora ridge in the Carpathians'],
       detail:'Every hiking itinerary in the country eventually points here — the summit that gives the whole range its bragging rights, and the natural finish line for anyone working through the Chornohora ridge.'},
     {id:'land-20',cat:'land',catLabel:'Land, Symbols & Places',title:'Brebeneskul — the Second-Highest Peak',
-      photos:[{src:'images/brebenescul.png',alt:'Mount Brebeneskul, Chornohora ridge'}],
+      photos:[{src:'images/76-land-brebenescul.png',alt:'Mount Brebeneskul, Chornohora ridge'},{src:'images/76-land-brebeneskul_view.jpg',alt:'View from Mount Brebeneskul'}],
       facts:['2,035 metres, Ukraine’s second-highest point','Just below it sits the highest lake in the Ukrainian Carpathians'],
       detail:'Lake Brebeneskul, tucked just under the summit, is the highest-altitude lake anywhere in the Ukrainian Carpathians — small, cold, and an almost unreasonably scenic reward for the extra climb past Hoverla.'},
     {id:'land-21',cat:'land',catLabel:'Land, Symbols & Places',title:'Pip Ivan Chornohirskyi — the Third Peak',
-      photos:[{src:'images/pp-van-8.jpg',alt:'Pip Ivan Chornohirskyi summit'}],
+      photos:[{src:'images/81-land-pp-van-8.jpg',alt:'Pip Ivan Chornohirskyi summit'}],
       facts:['2,022 metres, the third-highest peak in the country','Topped by the ruins of a 1930s observatory, nicknamed the “White Elephant”'],
       detail:'Long before it was a hiking landmark, the summit hosted a full astronomical and meteorological observatory — abandoned since the Second World War, its stone ruins nicknamed the “White Elephant,” now just a dramatic backdrop for anyone who makes the climb.'},
-    {id:'land-16',cat:'land',catLabel:'Land, Symbols & Places',title:'Every Landscape, One Country',
-      photos:[{src:'images/steppe.jpg',alt:'Ukrainian steppe'}],
-      facts:['Flat steppe in the south and east','Mountains climbing the west','Forests, marshland, a sea coast, and even a desert, all inside one border'],
-      detail:'Drive across Ukraine and the scenery genuinely doesn’t repeat itself — steppe gives way to farmland, farmland to forest, forest to mountains, and eventually to a coastline warm enough to swim in. Very few countries this size pack in this much variety.'},
     {id:'land-17',cat:'land',catLabel:'Land, Symbols & Places',title:'Kharkiv — the First Capital',
-      photos:[{src:'images/845.jpg',alt:'Derzhprom building, Kharkiv'}],
+      photos:[{src:'images/86-land-845.jpg',alt:'Derzhprom building, Kharkiv'}],
       facts:['Ukraine’s first Soviet-era capital, before Kyiv reclaimed the title','Home to Derzhprom, one of the world’s earliest constructivist skyscrapers'],
       detail:'Long before it was known as a university and tech hub, Kharkiv briefly ran the whole country — and Derzhprom, finished in 1928, was ambitious enough architecturally that it’s still considered a landmark of early constructivism.'},
     {id:'land-18',cat:'land',catLabel:'Land, Symbols & Places',title:'Chernihiv — Older Than Almost Everywhere Else',
-      photos:[{src:'images/photo_2_chernihiv_-_olena_varavva.jpg',alt:'Chernihiv ancient churches'}],
+      photos:[{src:'images/91-land-photo_2_chernihiv_-_olena_varavva.jpg',alt:'Chernihiv ancient churches'}],
       facts:['One of the oldest cities in Ukraine, predating Moscow','Its cathedrals rival Kyiv’s in age'],
       detail:'Chernihiv doesn’t get the tourist traffic Kyiv or Lviv do, which is almost the point — its 11th-century churches have had centuries of relative quiet to just stand there, largely undisturbed.'},
     {id:'land-19',cat:'land',catLabel:'Land, Symbols & Places',title:'The Wooden Churches of the Carpathians',
-      photos:[{src:'images/yasinia_wooden_church.jpg',alt:'A wooden Hutsul church, Yasinia'}],
+      photos:[{src:'images/95-land-yasinia_wooden_church.jpg',alt:'A wooden Hutsul church, Yasinia'}],
       facts:['Tall wooden churches, some built without a single nail','UNESCO World Heritage-listed since 2013, shared with Poland'],
-      detail:'Each region built them a little differently — steep-roofed here, tiered like a pagoda there — but all of them prove the same point: a determined carpenter and enough larch wood can raise something that outlasts stone.'}
+      detail:'Each region built them a little differently — steep-roofed here, tiered like a pagoda there — but all of them prove the same point: a determined carpenter and enough larch wood can raise something that outlasts stone.'},
+    {id:'land-22',cat:'land',catLabel:'Land, Symbols & Places',title:'Optymistychna Cave — the Longest Gypsum Cave on Earth',
+      photos:[{src:'images/99-land-optymistychna_cave.png',alt:'Cavers exploring the Optymistychna gypsum cave'}],
+      facts:['Over 230 km of mapped passages in Podillia','Formed slowly by water dissolving gypsum bedrock'],
+      detail:'Cavers have been extending the map for decades and still haven’t found the end of it — new passages keep turning up, and it remains the longest gypsum cave system ever recorded anywhere in the world.'},
+    {id:'land-23',cat:'land',catLabel:'Land, Symbols & Places',title:'Arsenalna — the Deepest Metro Station on Earth',
+      photos:[{src:'images/103-land-arsenalna_metro.jpg',alt:'Arsenalna metro station escalator, Kyiv'}],
+      facts:['105.5 metres below street level, on the Kyiv Metro','The escalator ride alone takes about five minutes'],
+      detail:'It was built deep enough to double as a bomb shelter, a Cold War design choice that still makes it the single deepest metro station anywhere in the world — nothing else comes close.'},
+    {id:'land-24',cat:'land',catLabel:'Land, Symbols & Places',title:'The Motherland Monument — Stainless Steel, Sixty-Two Metres Tall',
+      photos:[{src:'images/107-land-motherland_monument.jpg',alt:'The Motherland Monument, Kyiv'}],
+      facts:['A giant stainless-steel statue overlooking Kyiv','Part of the Museum of the Great Patriotic War complex'],
+      detail:'She’s holding a sword and shield large enough to be visible from across the city, built in 1981 as the Soviet Union’s answer to how big a war memorial could get. It’s still one of the tallest statues in Europe.'},
+    {id:'land-25',cat:'land',catLabel:'Land, Symbols & Places',title:'The Sea of Azov — the Shallowest Sea on Earth',
+      photos:[{src:'images/111-land-sea_of_azov.jpg',alt:'The Sea of Azov coastline'}],
+      facts:['Average depth of about 7 metres','Shared coastline with Russia, tucked behind Crimea'],
+      detail:'It’s barely a sea by most definitions — shallow enough that storms churn it into mud-brown chaos within hours, and warm enough by midsummer to feel more like a very large bath than an open body of water.'},
+    {id:'land-26',cat:'land',catLabel:'Land, Symbols & Places',title:'Askania-Nova — a Steppe Reserve Older Than the Soviet Union',
+      photos:[{src:'images/115-land-askania_nova.jpg',alt:'Wild horses on the Askania-Nova steppe reserve'}],
+      facts:['Founded in 1874 as a private nature reserve','One of the world’s oldest protected steppe ecosystems'],
+      detail:'A German-descended landowner named Friedrich Falz-Fein set the land aside for wild animals decades before “conservation” was a mainstream idea — herds of wild horses and antelope have been roaming it, largely undisturbed, ever since.'},
+    {id:'land-27',cat:'land',catLabel:'Land, Symbols & Places',title:'Kyiv’s Founding Legend — Three Brothers and a Sister',
+      photos:[{src:'images/119-land-kyi_shchek_khoryv_lybid.jpg',alt:'The Kyi, Shchek, Khoryv and Lybid monument, Kyiv'}],
+      facts:['Kyi, Shchek, and Khoryv, plus their sister Lybid','The city’s name is said to come from the eldest brother'],
+      detail:'The legend has no hard evidence behind it, but it’s stuck around for over a thousand years anyway — a statue of the four siblings on a boat now stands on the Dnipro embankment, treating the myth as settled fact.'},
+    {id:'land-28',cat:'land',catLabel:'Land, Symbols & Places',title:'The Tale of Ihor’s Campaign — Ukraine’s Oldest Epic',
+      photos:[{src:'images/123-land-tale_of_ihors_campaign.jpg',alt:'A manuscript page from The Tale of Ihor’s Campaign'}],
+      facts:['A 12th-century poem about Prince Ihor’s failed raid against the Polovtsians','Inspired the opera “Prince Igor” by Borodin'],
+      detail:'It survives in a single manuscript copy that nearly burned in an 1812 Moscow fire — lose that one copy, and one of the oldest pieces of East Slavic literature would have vanished with it.'},
+    {id:'land-29',cat:'land',catLabel:'Land, Symbols & Places',title:'Poltava — the Battle That Reshaped Eastern Europe',
+      photos:[{src:'images/127-land-poltava_battlefield.jpg',alt:'The Poltava battlefield memorial'}],
+      facts:['1709: Peter I defeated Cossack hetman Ivan Mazepa’s forces','Ended Ukraine’s bid for independence from Muscovy for two centuries'],
+      detail:'One battlefield, one afternoon, and the balance of power in Eastern Europe flipped for generations — Mazepa’s gamble on Swedish support collapsed, and Muscovy’s dominance over Ukraine held for two hundred years.'},
+    {id:'land-30',cat:'land',catLabel:'Land, Symbols & Places',title:'Khotyn Fortress — Guarding the Dniester for Six Centuries',
+      photos:[{src:'images/131-land-khotyn_fortress_on_the_dnieste.jpg',alt:'Khotyn Fortress on the Dniester River'}],
+      facts:['A medieval stronghold on the Dniester River, fought over by Ottomans, Poles, and Moldavians alike','Site of the 1621 Battle of Khotyn, involving over 100,000 troops'],
+      detail:'Kamianets-Podilskyi gets the fame and the tour-bus traffic, but Khotyn saw just as many sieges and is every bit as dramatic — quieter, easier to explore without a crowd, and the site of one of the largest clashes of the entire 17th century.'},
+    {id:'land-32',cat:'land',catLabel:'Land, Symbols & Places',title:'Bukovel — a Ski Resort Built From Nothing',
+      photos:[{src:'images/135-land-ski_lifts_at_bukovel_resort.jpg',alt:'Ski lifts at Bukovel resort'}],
+      facts:['Ukraine’s largest ski resort, opened in 2001','Sixteen lifts across the Carpathian slopes near Yablunytsia'],
+      detail:'There was essentially no infrastructure here before 2001 — just forest and slope. Two decades later it’s the anchor of Ukrainian winter tourism, built almost entirely from scratch.'},
+    {id:'land-33',cat:'land',catLabel:'Land, Symbols & Places',title:'Bakota — the Village Ukraine Flooded on Purpose',
+      photos:[{src:'images/139-land-bakota_monastery.jpg',alt:'The Bakota monastery cave complex above the Dniester Reservoir'}],
+      facts:['Submerged in the 1980s to build the Dniester Reservoir','Nicknamed “Ukraine’s Atlantis”'],
+      detail:'A monastery cave complex above the waterline is all that’s left visible — the rest of the village, houses and streets included, has been sitting quietly underwater for over forty years.'},
+    {id:'land-34',cat:'land',catLabel:'Land, Symbols & Places',title:'The Toltre Ridge — a Fossilized Coral Reef',
+      photos:[{src:'images/143-land-toltre_ridge.jpg',alt:'The Toltre limestone ridge, Podillia'}],
+      facts:['A limestone ridge running through Podillia and Moldova','Formed from a coral reef in a sea that dried up millions of years ago'],
+      detail:'Long before anyone farmed this land, it was seabed — the ridge is what’s left of a reef, now a two-hundred-kilometre stone spine cutting across the plains, nothing like the flat farmland around it.'},
+    {id:'land-35',cat:'land',catLabel:'Land, Symbols & Places',title:'Chersonesus — a Greek City Older Than Kyiv',
+      photos:[{src:'images/147-land-chersonesus.jpg',alt:'Ancient Greek ruins at Chersonesus, Crimea'}],
+      facts:['Ancient Greek ruins near Sevastopol, Crimea','Founded around 528 BC, UNESCO World Heritage-listed'],
+      detail:'Greek colonists were farming grapes and minting coins on this coastline centuries before Kyivan Rus existed — the ruins have outlasted the empire that built them by roughly two thousand years.'},
+    {id:'land-36',cat:'land',catLabel:'Land, Symbols & Places',title:'The Southern Bug — the River Nobody Talks About',
+      photos:[{src:'images/150-land-southern_bug.jpg',alt:'Granite canyons on the Southern Bug River'}],
+      facts:['Ukraine’s other major river, flowing into the Black Sea','Passes through Vinnytsia and historic granite canyons near Myhiya'],
+      detail:'The Dnipro gets all the attention, but the Southern Bug carves its own dramatic granite gorges on the way to the sea — whitewater rafting territory that most itineraries never mention.'},
+    {id:'land-37',cat:'land',catLabel:'Land, Symbols & Places',title:'Lake Synevyr — the Carpathians’ “Sea”',
+      photos:[{src:'images/153-land-transition_synevyr_lake.jpg',alt:'Lake Synevyr, the Carpathians'}],
+      facts:['The largest natural lake in the Ukrainian Carpathians','Nicknamed the “Carpathian Sea” for its size and colour'],
+      detail:'Local legend blames its origin on heartbreak — a nobleman drowned a shepherd out of jealousy, and the mountain wept the lake into existence overnight. Geologists have a duller explanation involving a landslide, but the sadder version is the one everyone tells.'},
+    {id:'land-38',cat:'land',catLabel:'Land, Symbols & Places',title:'The Dovbush Rocks — a Carpathian Folk Hero’s Hideout',
+      photos:[{src:'images/156-land-dovbush_rocks.jpg',alt:'The Dovbush Rocks, Ivano-Frankivsk Oblast'}],
+      facts:['Giant rock formations near Bubnyshche, Ivano-Frankivsk Oblast','Named after Oleksa Dovbush, an 18th-century outlaw folk hero'],
+      detail:'Dovbush is part historical bandit, part folk legend by now — nobody’s fully sure where the facts end and the tall tales begin, but the rocks he supposedly used as a hideout are real enough to climb through today.'},
+    {id:'land-39',cat:'land',catLabel:'Land, Symbols & Places',title:'Zoloti Vorota — Kyiv’s Golden Gate, Built to Rival Constantinople',
+      photos:[{src:'images/159-land-zoloti_vorota.jpg',alt:'Zoloti Vorota, the reconstructed Golden Gate of Kyiv'}],
+      facts:['Built in 1037 under Yaroslav the Wise as Kyiv’s main gate','Modeled on the Golden Gate of Constantinople, right down to the name'],
+      detail:'The name wasn’t modesty — Yaroslav wanted Kyiv read as a rival to Byzantium, and naming the main gate after Constantinople’s was the point, not an accident. The structure standing today is a 1982 reconstruction built over the actual 11th-century ruins, which are still there underneath.'},
+    {id:'land-40',cat:'land',catLabel:'Land, Symbols & Places',title:'Bohdan Khmelnytsky — the Hetman Who Founded a State',
+      photos:[{src:'images/162-land-bohdan_khmelnytsky_monument.jpg',alt:'The Bohdan Khmelnytsky monument, Kyiv'}],
+      facts:['Led the 1648 Cossack uprising against Polish rule','Founded the Cossack Hetmanate, an early Ukrainian proto-state'],
+      detail:'His statue on a rearing horse still stands dead centre of Kyiv, sword pointed toward Moscow — a detail nobody involved considers subtle. The 1654 treaty he signed with Muscovy for military support is still debated today: alliance, or the moment Ukrainian autonomy started slipping away.'}
   ];
 
   var MYTH = [
     {id:'myth-01',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Domovyk — the House Spirit',
-      photos:[{src:'images/domovyk_bilibin.jpg',alt:'Domovoi, illustration by Ivan Bilibin, 1934'}],
+      photos:[{src:'images/2-myth-domovyk_bilibin.jpg',alt:'Domovoi, illustration by Ivan Bilibin, 1934'}],
       facts:['Lives behind the stove','Keeps your luck, if you keep him fed'],
       detail:'Feed him. Respect him. That’s the whole arrangement with Domovyk. Break it, and nothing dramatic happens — the luck just quietly, deliberately, turns.'},
     {id:'myth-02',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Mavka — the Forest Maiden',
-      photos:[{src:'images/mavka_landart.jpg',alt:'Willow-branch Mavka land-art figures, Lutsk, 2021'}],
+      photos:[{src:'images/8-myth-mavka_landart.jpg',alt:'Willow-branch Mavka land-art figures, Lutsk, 2021'}],
       facts:['Forest spirit, beautiful, not entirely safe','Beauty enough to pull you off the path'],
       detail:'Don’t follow her off the trail after dark. She’s lovelier than she has any right to be, and that’s rather the point — Mavka’s origin traces back to the souls of children who died too soon.'},
     {id:'myth-03',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Rusalka — the Water Spirit',
-      photos:[{src:'images/rusalka_kramskoi.jpg',alt:'The Mermaids, Ivan Kramskoi, 1871'}],
+      photos:[{src:'images/14-myth-rusalka_kramskoi.jpg',alt:'The Mermaids, Ivan Kramskoi, 1871'}],
       facts:['Water spirit, tied to rivers and lakes','Most active during Rusalka Week, early summer'],
       detail:'Kramskoi painted these in 1871 — nineteen rusalky drifting by moonlight. One tradition has never really faded: don’t go swimming alone during Rusalka Week. Not even now.'},
     {id:'myth-04',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Berehynia & the Horseshoe',
-      photos:[{src:'images/berehynia_monument.jpg',alt:'The Independence Monument, Kyiv'}],
+      photos:[{src:'images/20-myth-berehynia_monument.jpg',alt:'The Independence Monument, Kyiv'}],
       facts:['Mother-protector of the family line','The horseshoe over the door: the same idea, sized down'],
       detail:'She stands over the entire country, literally — twenty tonnes of bronze on a column sixty-one metres tall, dead centre of Kyiv’s Independence Square since 2001.'},
     {id:'myth-05',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Kalyna — Blood, Family & Homeland',
-      photos:[{src:'images/kalyna.jpg',alt:'Kalyna, red viburnum berries'}],
+      photos:[{src:'images/26-myth-kalyna.jpg',alt:'Kalyna, red viburnum berries'}],
       facts:['Bright red viburnum berries','A fixture in Ukrainian song'],
       detail:'It’s doing three jobs at once and nobody bothers separating them out — kalyna reads as blood, as family, and as homeland, all in the same red berry.'},
     {id:'myth-06',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Stork — New Life on the Roof',
-      photos:[{src:'images/stork_nest.jpg',alt:'White stork nest'}],
+      photos:[{src:'images/32-myth-stork_nest.jpg',alt:'White stork nest'}],
       facts:['Home, family, new life','A nest on the roof: a good sign'],
       detail:'The logic is almost sweetly literal: a stork’s nest on your roof means a new life is headed for that house. Plenty of rural families still leave an old cart wheel up there.'},
     {id:'myth-07',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Ivana Kupala — Wreaths & Fire',
-      photos:[{src:'images/kupala_bonfire.jpg',alt:'Ivana Kupala ritual bonfire'}],
+      photos:[{src:'images/37-myth-kupala_bonfire.jpg',alt:'Ivana Kupala ritual bonfire'}],
       facts:['Night of July 6–7, the summer solstice','Wreaths on the water; a bonfire jumped hand in hand'],
       detail:'A wreath set adrift reads a girl’s romantic future in how it drifts away from her. A couple leaps the bonfire together, hands locked — let go mid-air, and everyone watching knows exactly what that means.'},
     {id:'myth-08',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Sviatvechir — the Twelve Dishes',
-      photos:[{src:'images/sviatvechir_dishes.jpg',alt:'Twelve-dish Christmas Eve supper'}],
+      photos:[{src:'images/42-myth-sviatvechir_dishes.jpg',alt:'Twelve-dish Christmas Eve supper'}],
       facts:['Christmas Eve, twelve meatless dishes','Kutia, sweet wheat porridge, front and centre'],
       detail:'Twelve isn’t decorative — one dish per apostle, which quietly turns an ordinary family dinner into a full piece of theology nobody has to explain out loud.'},
     {id:'myth-09',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vertep & Easter — Closing the Loop',
-      photos:[{src:'images/holidays_vertep.jpg',alt:'A vertep Christmas puppet scene'}],
+      photos:[{src:'images/47-myth-holidays_vertep.jpg',alt:'A vertep Christmas puppet scene'}],
       facts:['Vertep — puppets retell the Nativity, mostly for laughs','Easter — back to the pysanky this page opened with'],
       detail:'Vertep is folk theatre, not solemn ritual — puppets doing the Nativity with a wink. Easter is the quieter close: the same painted eggs, handed out again as a promise that things come back.'},
     {id:'myth-10',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Hopak — the Cossack Dance',
-      photos:[{src:'images/music_hopak.jpg',alt:'Dancers performing the hopak'}],
+      photos:[{src:'images/52-myth-music_hopak.jpg',alt:'Dancers performing the hopak'}],
       facts:['Acrobatic, Cossack-rooted','Full of jumps designed to show off, not just keep time'],
       detail:'Hopak was as much a display of fitness and nerve as it was entertainment — the high kicks and squat-jumps were originally a way for Cossacks to prove they were still combat-ready, dressed up as a dance.'},
     {id:'myth-11',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Bandura — Sixty Strings, One Instrument',
-      photos:[{src:'images/bandura_closeup.jpg',alt:'A panska bandura, 20th century'}],
+      photos:[{src:'images/57-myth-bandura_closeup.jpg',alt:'A panska bandura, 20th century'}],
       facts:['60-plus strings on a full-sized instrument','Built for the kobzars, Ukraine’s travelling bards'],
       detail:'It’s a strange, beautiful outlier of an instrument — few instruments anywhere carry that many strings — and it existed specifically to accompany the kobzars who carried Ukrainian history in song long before it was widely written down.'},
     {id:'myth-12',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Kobza — the Bandura’s Quieter Ancestor',
-      photos:[{src:'images/kobza.jpg',alt:'A traditional kobza instrument'}],
+      photos:[{src:'images/62-myth-kobza.jpg',alt:'A traditional kobza instrument'}],
       facts:['A simpler, older lute-like instrument','Predates the bandura by centuries'],
       detail:'Long before the 60-string bandura existed, travelling musicians carried the kobza instead — smaller, plainer, and just as central to keeping stories and songs moving from village to village.'},
     {id:'myth-13',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Sopilka — a Flute Older Than the Record Books',
-      photos:[{src:'images/zvuk-ukrayini--istoriya-pohodzhennya-sopilki-0_70862fe6.jpg',alt:'A traditional Ukrainian sopilka flute'}],
+      photos:[{src:'images/67-myth-zvuk-ukrayini--istoriya-pohodzhennya-sopilki-0_70862fe6.jpg',alt:'A traditional Ukrainian sopilka flute'}],
       facts:['A simple wooden folk flute','Some form of it likely predates written Ukrainian history'],
       detail:'It’s about as unassuming an instrument as exists — a few holes drilled in wood — and it’s survived essentially unchanged for centuries because there was never a reason to improve on something this direct.'},
     {id:'myth-14',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Tsymbaly — Struck, Not Plucked',
-      photos:[{src:'images/tsymbaly_instrument.jpg',alt:'A traditional tsymbaly hammered dulcimer'}],
+      photos:[{src:'images/72-myth-tsymbaly_instrument.jpg',alt:'A traditional tsymbaly hammered dulcimer'}],
       facts:['A hammered string instrument, played with small mallets','A staple of Hutsul folk ensembles'],
       detail:'Picture a piano with the lid off and no keys in between — just strings you strike directly — and you’re most of the way to understanding why the tsymbaly sounds like nothing else in the ensemble.'},
     {id:'myth-15',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'The Trembita — a Horn Built to Carry for Miles',
-      photos:[{src:'images/trembita.jpg',alt:'Hutsul trembita horn'}],
+      photos:[{src:'images/77-myth-trembita.jpg',alt:'Hutsul trembita horn'}],
       facts:['A Hutsul alpine horn, several metres long','Traditionally played at weddings and funerals alike'],
       detail:'Mountain villages still use it the old way — not as a performance for visitors, but as the sound that’s always carried from one ridge to the next when something in the valley actually needs announcing.'},
     {id:'myth-16',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Kolomyika — a Dance and a Song in One Breath',
-      photos:[{src:'images/kolomyia_town_hall.jpg',alt:'Kolomyia, the town the dance takes its name from'}],
+      photos:[{src:'images/82-myth-kolomyia_town_hall.jpg',alt:'Kolomyia, the town the dance takes its name from'}],
       facts:['A fast Hutsul dance-and-song form from the Carpathians','Verses are often improvised on the spot, dance included'],
-      detail:'It’s less a fixed routine than a format — quick verses, quicker footwork, and dancers who are expected to riff on both as the mood in the room demands.'},
+      detail:'It’s less a fixed routine than a format — quick verses, quicker footwork, and dancers who are expected to riff on both as the mood in the room demands. Full disclosure: Roman is from Kolomyia too.'},
     {id:'myth-17',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vovkulak — the Ukrainian Werewolf',
-      photos:[{src:'images/vovkulak_wolf.jpg',alt:'A grey wolf, folkloric stand-in for the vovkulak'}],
+      photos:[{src:'images/87-myth-vovkulak_wolf.jpg',alt:'A grey wolf, folkloric stand-in for the vovkulak'}],
       facts:['A person cursed or transformed into a wolf','Some versions say the curse could be lifted, others say never'],
       detail:'Depending on which village told the story, a vovkulak was either a tragic victim of someone else’s curse or a sorcerer who chose the wolf shape deliberately — folklore never quite settled the argument.'},
     {id:'myth-18',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vodyanyk — the Water Spirit’s Grumpier Cousin',
-      photos:[{src:'images/vodyanyk_mill.jpg',alt:'Vodyanyk, the water spirit tied to mills and rivers'}],
+      photos:[{src:'images/92-myth-vodyanyk_mill.jpg',alt:'Vodyanyk, the water spirit tied to mills and rivers'}],
       facts:['A male water spirit tied to mills, rivers, and deep pools','Said to be temperamental — best kept happy, not provoked'],
       detail:'Where Rusalka lures you in with beauty, Vodyanyk mostly just resents being disturbed — millers in particular stayed on his good side, since an angry Vodyanyk could jam a watermill without warning.'},
     {id:'myth-19',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Poludnitsa — the Spirit of High Noon',
-      photos:[{src:'images/poludnitsa_field.jpg',alt:'A sunlit wheat field at midday'}],
+      photos:[{src:'images/96-myth-poludnitsa_field.jpg',alt:'A sunlit wheat field at midday'}],
       facts:['A field spirit active only at the hottest part of the day','Traditionally blamed for sunstroke and confusion in the fields'],
       detail:'Before anyone had a word for heatstroke, Poludnitsa was the explanation — a reason not to be caught working the fields, dazed and alone, right at noon.'},
     {id:'myth-20',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Obzhynky — the Last Sheaf of the Harvest',
-      photos:[{src:'images/obzhynky_wheat.jpg',alt:'Sheaves of wheat, harvest time'}],
+      photos:[{src:'images/100-myth-obzhynky_wheat.jpg',alt:'Sheaves of wheat, harvest time'}],
       facts:['A harvest-festival tradition marking the end of reaping','The last sheaf cut was treated with special ceremony'],
       detail:'That final bundle of wheat wasn’t just cut and stacked — it was dressed up, sometimes carried into the village like a small parade, a way of thanking the field before winter set in.'},
     {id:'myth-21',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Malanka — New Year in a Costume',
-      photos:[{src:'images/malanka_costume.jpg',alt:'Malanka costumed New Year celebration'}],
+      photos:[{src:'images/104-myth-malanka_costume.jpg',alt:'Malanka costumed New Year celebration'}],
       facts:['A costumed, carnival-style New Year celebration','Villagers go door to door in elaborate disguises'],
       detail:'It’s part folklore, part street theatre — goats, bears, and mock-brides wandering from house to house, trading blessings for treats, in a tradition older than the calendar it now celebrates.'},
     {id:'myth-22',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Andriivski Vechornytsi — the Night of Fortune-Telling',
-      photos:[{src:'images/Ilja_Jefimowitsch_Repin_001.jpg',alt:'St. Andrew’s Eve divination gathering'}],
+      photos:[{src:'images/108-myth-Ilja_Jefimowitsch_Repin_001.jpg',alt:'St. Andrew’s Eve divination gathering'}],
       facts:['An evening of divination games, traditionally for unmarried women','Held on the eve of St. Andrew’s Day, in December'],
-      detail:'Melted wax dropped in water, grain fed to a rooster, a boot thrown over a shoulder toward the gate — different ways of asking the same question about who you’d end up with, treated as a fun communal night rather than anything solemn.'}
+      detail:'Melted wax dropped in water, grain fed to a rooster, a boot thrown over a shoulder toward the gate — different ways of asking the same question about who you’d end up with, treated as a fun communal night rather than anything solemn.'},
+    {id:'myth-23',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Perun — the Thunder God Before Christianity',
+      photos:[{src:'images/112-myth-perun_idol.jpg',alt:'An idol of Perun, the pre-Christian thunder god'}],
+      facts:['Chief god of the pre-Christian Slavic pantheon','His idol reportedly stood on a hill above Kyiv until 988'],
+      detail:'When Prince Volodymyr converted Kyivan Rus to Christianity in 988, Perun’s statue didn’t get a quiet retirement — it was tied up, dragged through the streets, and thrown into the Dnipro, the old religion’s ending staged as public theatre.'},
+    {id:'myth-24',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Veles — God of the Underworld and Cattle',
+      photos:[{src:'images/116-myth-veles_artwork.jpg',alt:'A carved depiction of Veles'}],
+      facts:['Perun’s rival in the old Slavic pantheon','Associated with cattle, wealth, and the world of the dead'],
+      detail:'Where Perun ruled the sky, Veles ruled everything underneath it — livestock, wealth, and the underworld all fell under one god’s domain, a tidier arrangement than most modern pantheons manage.'},
+    {id:'myth-25',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Mokosh — Goddess of Earth and Fertility',
+      photos:[{src:'images/120-myth-mokosh.png',alt:'A depiction of Mokosh, goddess of earth'}],
+      facts:['The only major goddess named in the old Kyivan Rus chronicles','Linked to weaving, harvest, and childbirth'],
+      detail:'She’s one of the few female figures to survive into the written record at all — everything else about the old pantheon comes from folklore reconstructed centuries later, but Mokosh actually got named in the chronicles.'},
+    {id:'myth-26',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Lada — Goddess of Spring and Love',
+      photos:[{src:'images/124-myth-lada_sculpture.jpg',alt:'A folk-art depiction of Lada'}],
+      facts:['Associated with springtime, love, and marriage','Her name survives in Ukrainian as a term of endearment'],
+      detail:'Historians still argue about how real “Lada” was as an actually worshipped deity versus a later folklore invention — but the word stuck around regardless, still used today as a soft, old-fashioned term for a sweetheart.'},
+    {id:'myth-27',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Rid and Rozhanytsi — the Spirits Who Decide Fate',
+      photos:[{src:'images/128-myth-rid_rozhanytsi.png',alt:'A folk offering left for the Rozhanytsi spirits'}],
+      facts:['Ancestral spirits tied to birth and family destiny','Offerings were traditionally left out at births and weddings'],
+      detail:'The idea was that your fate got quietly decided at birth by spirits nobody could see — a belief serious enough that families left food out for them at christenings well into the 19th century.'},
+    {id:'myth-28',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Shchedryk — the Carol That Became “Carol of the Bells”',
+      photos:[{src:'images/132-myth-shchedryk_choir.png',alt:'Sheet music for the Shchedryk carol'}],
+      facts:['A Ukrainian New Year folk song, arranged by Mykola Leontovych in 1916','Reworked into the English-language “Carol of the Bells” in 1936'],
+      detail:'Almost nobody singing along to it every December realizes the melody is a Ukrainian folk tune about a swallow announcing a prosperous new year — the English lyrics about bells came decades later and kept none of the original story.'},
+    {id:'myth-29',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Kolyada — the Carols Before Sviatvechir',
+      photos:[{src:'images/136-myth-kolyada.jpg',alt:'Costumed carolers going door to door'}],
+      facts:['Groups of carolers going house to house, often in costume','Distinct from Sviatvechir — this is the singing that follows it'],
+      detail:'Kolyadnyky don’t just sing and leave — traditionally they’re blessing the house in exchange for treats, a door-to-door performance that’s part hymn, part folk theatre, part good-natured extortion.'},
+    {id:'myth-30',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Didukh — the Sheaf That Anchors Christmas Eve',
+      photos:[{src:'images/140-myth-didukh_sheaf.jpg',alt:'A didukh wheat sheaf displayed for Sviatvechir'}],
+      facts:['A decorative sheaf of wheat placed in the home for Sviatvechir','Its name roughly translates to “grandfather spirit”'],
+      detail:'It’s not just decoration — the sheaf is meant to stand in for the ancestors, invited to the table alongside the living. It stays up through the holidays and is only burned or scattered on the fields afterward, feeding the next harvest.'},
+    {id:'myth-31',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Kutia — the Dish That Opens Sviatvechir',
+      photos:[{src:'images/144-myth-kutia_bowl.jpg',alt:'A bowl of kutia, wheat with poppy seed and honey'}],
+      facts:['Boiled wheat, poppy seed, honey, and dried fruit or nuts','Traditionally the first of the twelve Sviatvechir dishes eaten'],
+      detail:'Every other dish on the table can vary by region, but kutia is close to non-negotiable — sweet, slow to make, and eaten first as a kind of ceremonial opening bell for the whole meal.'},
+    {id:'myth-32',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vodokhreshche (Epiphany) — Blessing the Water, Ice Included',
+      photos:[{src:'images/148-myth-vodokhreshche.jpg',alt:'A cross-shaped hole cut in river ice for Vodokhreshche'}],
+      facts:['Epiphany celebration in January, marking the baptism of Christ','Traditionally involves cutting a cross-shaped hole in river ice for a blessing — and a swim'],
+      detail:'Priests bless the water, and then some people go in anyway, ice and all. It’s treated less as an endurance stunt and more as a once-a-year ritual cleansing — cold water, warm crowd, and a lot of onlookers filming it.'},
+    {id:'myth-33',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Korovai — the Wedding Bread Too Important to Rush',
+      photos:[{src:'images/151-myth-korovai_bread.jpg',alt:'A decorated korovai wedding bread'}],
+      facts:['A tall, elaborately decorated ceremonial wedding bread','Baked by a group of specially chosen married women, never by the bride'],
+      detail:'The bread itself is basically a wish made edible — braided dough shaped into birds, rings, and wheat stalks, each meaning something specific about the marriage, and the whole thing has to turn out right or it’s considered a bad omen.'},
+    {id:'myth-34',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Rushnyk — the Cloth That Marks Every Milestone',
+      photos:[{src:'images/154-myth-rushnyk_cloth.jpeg',alt:'An embroidered rushnyk ritual cloth'}],
+      facts:['A long embroidered ritual cloth','Used at births, weddings, funerals, and to greet guests'],
+      detail:'One length of embroidered linen covers the whole span of a life — newborns are laid on one, couples stand on one at weddings, and coffins are lowered with one. Few textiles anywhere carry that much ceremonial weight.'},
+    {id:'myth-35',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Dumy — the Ballads the Kobzars Actually Sang',
+      photos:[{src:'images/157-myth-dumy.jpg',alt:'A kobzar performing a duma ballad'}],
+      facts:['Long improvised epic ballads, historically sung by blind kobzars','Often recount Cossack battles, captivity, and escape'],
+      detail:'The bandura and kobza get all the attention as instruments, but dumy were the actual point — hours-long sung histories that kept Cossack memory alive for people who couldn’t read it in a book.'},
+    {id:'myth-36',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vesnianky — Songs That Called in Spring',
+      photos:[{src:'images/160-myth-vesnianky.jpg',alt:'A vesnianky round dance'}],
+      facts:['Ritual spring songs, traditionally sung by young women in round dances','Believed to help “wake up” the land after winter'],
+      detail:'The logic was fairly literal — sing loudly enough in a circle outdoors, and spring shows up faster. Whether or not it worked agriculturally, the round-dance songs survived long after anyone took the magic seriously.'},
+    {id:'myth-37',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Perelesnyk — the Fire Spirit Who Visits at Night',
+      photos:[{src:'images/163-myth-perelesnyk.jpg',alt:'A folk depiction of Perelesnyk as a falling star'}],
+      facts:['A shape-shifting fire-demon said to visit lonely widows','Appears as a falling star or a handsome stranger'],
+      detail:'The folklore is oddly specific about the warning signs — sudden loneliness, sightings of a strange light near the house — all pointing to a spirit that supposedly meant company, and trouble, in equal measure.'},
+    {id:'myth-39',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Vyshyvanka Day — a Holiday Invented in 2006',
+      photos:[{src:'images/165-myth-vyshyvanka_day.jpg',alt:'People wearing vyshyvanka shirts for Vyshyvanka Day'}],
+      facts:['A modern holiday, the third Thursday of every May','People wear embroidered vyshyvanka shirts, worldwide, on the same day'],
+      detail:'It started as one university student’s idea in Chernivtsi and turned into an international event within a few years — by now Ukrainians, and plenty of non-Ukrainians, mark it from Kyiv to Toronto.'},
+    {id:'myth-41',cat:'myth',catLabel:'Mythology, Holidays & Music',title:'Zozulya — the Cuckoo That Predicts Your Fortune',
+      photos:[{src:'images/166-myth-cuckoo.jpg',alt:'A cuckoo bird in a Ukrainian forest'}],
+      facts:['The cuckoo bird, a recurring omen in Ukrainian folk song','Its call is traditionally counted to guess how many years you’ll live'],
+      detail:'Hearing one call in spring used to send people counting under their breath — however many times it called back was treated as a rough forecast of years left, equal parts folk game and mild anxiety.'}
   ];
 
   var FOOD = [
     {id:'food-01',cat:'food',catLabel:'Food & Drink',title:'Borsch — a Soup With a Hundred Accents',
-      photos:[{src:'images/борщ.jpg',alt:'A bowl of borsch'}],
+      photos:[{src:'images/3-food-borsch.jpg',alt:'A bowl of borsch'}],
       facts:['Ukraine’s signature soup, beet-red at its base','Every region argues its own version is correct','Added to UNESCO’s Intangible Heritage list in 2022'],
       detail:'There’s no single borsch — there’s a family argument that happens to be delicious. Beans here, prunes there, a dollop of sour cream everywhere. UNESCO recognizing it in 2022 didn’t settle the family argument. Nothing will.'},
     {id:'food-02',cat:'food',catLabel:'Food & Drink',title:'Vareniki — Filled and Folded',
-      photos:[{src:'images/vareniki_dish.jpg',alt:'Vareniki dumplings on a plate'}],
+      photos:[{src:'images/9-food-vareniki_dish.jpg',alt:'Vareniki dumplings on a plate'}],
       facts:['Half-moon dumplings, boiled or fried','Filled with potato, cheese, cherry, or cabbage'],
       detail:'Sweet or savoury, decided entirely by what you pinch inside the dough before folding it shut. The cherry version quietly turns dessert into an argument about whether dessert needs sour cream too. It does.'},
     {id:'food-03',cat:'food',catLabel:'Food & Drink',title:'Holubtsi — Cabbage, Wrapped',
-      photos:[{src:'images/holubtsi_dish.jpg',alt:'Holubtsi cabbage rolls'}],
+      photos:[{src:'images/15-food-holubtsi_dish.jpg',alt:'Holubtsi cabbage rolls'}],
       facts:['Cabbage leaves wrapped around rice and meat','Simmered low and slow in tomato sauce'],
       detail:'Patient food — the kind a grandmother starts in the morning without asking whether anyone will be home for dinner. They will be. That’s rather the point of cooking something that takes this long.'},
     {id:'food-04',cat:'food',catLabel:'Food & Drink',title:'Deruny — Potato, Fried Crisp',
-      photos:[{src:'images/deruny_dish.jpg',alt:'Deruny potato pancakes'}],
+      photos:[{src:'images/21-food-deruny_dish.jpg',alt:'Deruny potato pancakes'}],
       facts:['Grated potato pancakes, fried until the edges crackle','Served with sour cream, almost always'],
       detail:'The whole dish is a bet that potato, egg, and a hot pan is enough — and it wins, every time, especially with the edges left just slightly burnt on purpose.'},
     {id:'food-05',cat:'food',catLabel:'Food & Drink',title:'Salo — Cured Fat, National Pride',
-      photos:[{src:'images/salo_dish.jpg',alt:'Slices of salo'}],
+      photos:[{src:'images/27-food-salo_dish.jpg',alt:'Slices of salo'}],
       facts:['Cured pork fat, thinly sliced','Eaten on rye bread with garlic, not apologetically'],
       detail:'Salo gets treated like a delicacy, not a guilty pleasure — there’s no irony in how seriously people take the right thickness of the slice or the right amount of garlic rubbed on top.'},
     {id:'food-06',cat:'food',catLabel:'Food & Drink',title:'Uzvar — the Non-Alcoholic Toast',
-      photos:[{src:'images/uzvar_drink.jpg',alt:'A glass of uzvar'}],
+      photos:[{src:'images/33-food-uzvar_drink.jpg',alt:'A glass of uzvar'}],
       facts:['A drink of dried fruit simmered in water','A fixture at the Sviatvechir table'],
       detail:'Barely sweetened, closer to a tea than a juice — it shows up at Christmas Eve supper precisely because it asks nothing of anyone, in a meal built entirely around restraint.'},
     {id:'food-07',cat:'food',catLabel:'Food & Drink',title:'Horilka — the Grain Spirit',
-      photos:[{src:'images/horilka_bottle.jpg',alt:'A bottle of horilka'}],
+      photos:[{src:'images/38-food-horilka_bottle.jpg',alt:'A bottle of horilka'}],
       facts:['A clear grain spirit, Ukraine’s answer to vodka','Often infused with honey, pepper, or fruit at home'],
       detail:'The word predates the country’s modern borders by centuries, and the home-infused versions — honey, horseradish, cherry — are where every family quietly claims a specialty nobody else can replicate.'},
-    {id:'food-08',cat:'food',catLabel:'Food & Drink',title:'Khlib-sil — Welcome, the Ukrainian Way',
-      photos:[{src:'images/khlib_sil.jpg',alt:'Bread and salt welcome tradition'}],
+    {id:'food-08',cat:'food',catLabel:'Food & Drink',title:'Khlib-sil (Bread and Salt) — Welcome, the Ukrainian Way',
+      photos:[{src:'images/43-food-khlib_sil.jpg',alt:'Bread and salt welcome tradition'}],
       facts:['A round loaf presented with salt on top','Offered to honoured guests at the threshold'],
       detail:'You tear a piece, dip it in the salt, and eat it right there at the door — the oldest possible way to say “you’re safe here” without saying anything at all.'},
     {id:'food-09',cat:'food',catLabel:'Food & Drink',title:'Kyivskyi Tort — a Cold War Secret Recipe',
-      photos:[{src:'images/kyiv_cake.jpg',alt:'A slice of Kyiv cake'}],
+      photos:[{src:'images/48-food-kyiv_cake.jpg',alt:'A slice of Kyiv cake'}],
       facts:['Meringue-and-hazelnut layer cake, invented in 1956','Its exact recipe was a guarded factory secret for decades'],
       detail:'A Kyiv confectionery factory kept the precise recipe under lock and key for years — a strange amount of institutional secrecy to spend protecting a cake, and exactly the kind of story Ukraine tells best.'},
     {id:'food-10',cat:'food',catLabel:'Food & Drink',title:'Syrnyky — Cottage Cheese, Pan-Fried',
-      photos:[{src:'images/syrnyky_dish.jpg',alt:'A plate of syrnyky pancakes'}],
+      photos:[{src:'images/53-food-syrnyky_dish.jpg',alt:'A plate of syrnyky pancakes'}],
       facts:['Small pan-fried cottage-cheese pancakes','A breakfast staple, usually with jam or sour cream'],
       detail:'It’s the kind of dish every household makes slightly differently and every household insists their version is the right one — sweeter batter, denser batter, more vanilla, less. There’s no consensus, and nobody’s trying to reach one.'},
     {id:'food-11',cat:'food',catLabel:'Food & Drink',title:'Banosh — the Hutsul Mountain Classic',
-      photos:[{src:'images/banosh-v-multyvarczi.jpg',alt:'A bowl of banosh with sheep cheese'}],
+      photos:[{src:'images/58-food-banosh-v-multyvarczi.jpg',alt:'A bowl of banosh with sheep cheese'}],
       facts:['A creamy cornmeal porridge from the Hutsul Carpathians','Topped with sheep cheese and often bacon cracklings'],
       detail:'It belongs squarely to the Ukrainian Carpathians, not a borrowed dish — though cornmeal porridges like it turn up under other names across the wider Carpathian and Balkan region, the way borscht has cousins in half of Eastern Europe. The sheep cheese on top is what makes it distinctly Hutsul.'},
     {id:'food-12',cat:'food',catLabel:'Food & Drink',title:'Kholodets — Dinner That Sets Like Jelly',
-      photos:[{src:'images/svino-govyazhij-holodec3.jpg',alt:'Kholodets, meat jelly'}],
+      photos:[{src:'images/63-food-svino-govyazhij-holodec3.jpg',alt:'Kholodets, meat jelly'}],
       facts:['A savoury meat jelly, made from slow-simmered bone broth','A cold-weather and holiday-table regular'],
       detail:'It sounds like an unusual sell until you’ve had it with mustard and a shot of horilka on the side — a dish built entirely around turning patience, and gelatin, into something people genuinely look forward to.'},
     {id:'food-13',cat:'food',catLabel:'Food & Drink',title:'Nalysnyky — Ukraine’s Answer to the Crepe',
-      photos:[{src:'images/налисники.jpg',alt:'Nalysnyky filled crepes'}],
+      photos:[{src:'images/68-food-nalysnyky.jpg',alt:'Nalysnyky filled crepes'}],
       facts:['Thin crepes, rolled around a sweet or savoury filling','Cottage cheese is the classic filling, but not the only one'],
       detail:'Thinner than a pancake, sturdier than a crepe elsewhere — just structured enough to be rolled tight around a filling and fried again without falling apart.'},
     {id:'food-14',cat:'food',catLabel:'Food & Drink',title:'Kvass — the Drink That Isn’t Quite Beer',
-      photos:[{src:'images/kvass_barrel.jpg',alt:'A kvass barrel'}],
+      photos:[{src:'images/73-food-kvass_barrel.jpg',alt:'A kvass barrel'}],
       facts:['A mildly fermented drink, usually made from rye bread','Low in alcohol, sold from street barrels in summer'],
       detail:'It occupies a strange, pleasant category all its own — fermented enough for a real tang, mild enough that it’s sold to everyone, from a barrel on a hot street corner, like it’s lemonade.'},
     {id:'food-15',cat:'food',catLabel:'Food & Drink',title:'Paska — the Bread That Waits All Year for Easter',
-      photos:[{src:'images/paska_bread.jpg',alt:'Paska Easter bread'}],
+      photos:[{src:'images/78-food-paska_bread.jpg',alt:'Paska Easter bread'}],
       facts:['A tall, sweet Easter bread, richly decorated on top','Blessed at church before the Easter meal begins'],
       detail:'Families line up outside church on Easter morning with baskets holding paska and painted pysanky side by side — the same two symbols of renewal this whole page keeps circling back to, blessed together, once a year.'},
     {id:'food-16',cat:'food',catLabel:'Food & Drink',title:'Medivnyk — Honey Cake, Layered Thin',
-      photos:[{src:'images/медівник.jpg',alt:'A slice of medivnyk honey cake'}],
+      photos:[{src:'images/83-food-medivnyk.jpg',alt:'A slice of medivnyk honey cake'}],
       facts:['A honey layer cake, thin sponge stacked high','Gets better after a day or two resting in the fridge'],
       detail:'Nobody rushes to eat it fresh — the thin honeyed layers are meant to sit and soften against the cream in between, so the whole cake is deliberately made a day ahead of when it’s actually served.'},
     {id:'food-17',cat:'food',catLabel:'Food & Drink',title:'Kyivska Kotleta — the Cutlet That Travelled the World',
-      photos:[{src:'images/kyivi_kotlet.jpg',alt:'A Kyivska kotleta cutlet, cut open with butter spilling out'}],
+      photos:[{src:'images/88-food-kyivi_kotlet.jpg',alt:'A Kyivska kotleta cutlet, cut open with butter spilling out'}],
       facts:['A breaded chicken cutlet, wrapped around a core of herb butter','Known internationally as Chicken Kiev'],
       detail:'Cut into it the right way and hot herb butter spills straight onto the plate — the dish’s entire reputation rests on that one moment, which is exactly why it became a steakhouse and airline-menu staple worldwide.'},
     {id:'food-18',cat:'food',catLabel:'Food & Drink',title:'Honey — a Quietly Enormous Industry',
-      photos:[{src:'images/honeyjpg.jpg',alt:'Ukrainian honeycomb and beekeeping'}],
+      photos:[{src:'images/93-food-honeyjpg.jpg',alt:'Ukrainian honeycomb and beekeeping'}],
       facts:['Ukraine is consistently among the world’s top honey producers','Beekeeping traditions run deep in rural villages'],
-      detail:'It doesn’t get the international attention borscht or vareniki do, but by sheer volume, honey is one of Ukraine’s quietest and most consistent culinary exports — jars of it turning up in kitchens on the other side of the planet with no idea where it came from.'}
+      detail:'It doesn’t get the international attention borscht or vareniki do, but by sheer volume, honey is one of Ukraine’s quietest and most consistent culinary exports — jars of it turning up in kitchens on the other side of the planet with no idea where it came from.'},
+    {id:'food-19',cat:'food',catLabel:'Food & Drink',title:'Halushky — the Other Ukrainian Dumpling',
+      photos:[{src:'images/97-food-halushky.jpg',alt:'A bowl of halushky dumplings'}],
+      facts:['Small boiled or fried dough dumplings, plainer than vareniki','A Poltava regional specialty, often served with sour cream or bacon fat'],
+      detail:'They’re deliberately simple — no filling, just dough — which is exactly why they show up everywhere as a side dish, soaking up whatever sauce or fat happens to be on the table.'},
+    {id:'food-20',cat:'food',catLabel:'Food & Drink',title:'Pampushky — Garlic Buns, or Sometimes Dessert',
+      photos:[{src:'images/101-food-pampushky.jpg',alt:'Garlic pampushky buns beside a bowl of borsch'},{src:'images/101-food-pampushky_sweet.png',alt:'Sweet pampushky filled with poppy seed'}],
+      facts:['Small yeasted buns, classically brushed with garlic oil and served with borsch','A sweet version exists too — filled with poppy seed or fruit as a dessert'],
+      detail:'Order borsch almost anywhere in Ukraine and a basket of garlic pampushky shows up alongside it, unasked, like cutlery. The sweet version is a completely different animal — same soft bun, filled instead of glazed with garlic, and eaten as dessert rather than a side.'},
+    {id:'food-21',cat:'food',catLabel:'Food & Drink',title:'Kvashena Kapusta (Fermented Cabbage) — Waiting Out the Winter',
+      photos:[{src:'images/105-food-kvashena_kapusta.png',alt:'A barrel of fermented cabbage'}],
+      facts:['Fermented shredded cabbage, salted and left to sour','A pantry staple that lasts through winter without refrigeration'],
+      detail:'Before refrigeration existed, this was how a whole winter’s worth of vegetables got preserved — a barrel of salted cabbage left to ferment quietly in a cellar, ready whenever fresh produce wasn’t.'},
+    {id:'food-22',cat:'food',catLabel:'Food & Drink',title:'Kalach — the Bread Shaped Like a Ring',
+      photos:[{src:'images/109-food-kalach.jpg',alt:'A braided ring-shaped kalach bread'}],
+      facts:['A braided, ring-shaped ceremonial bread','Baked for weddings and Christmas, distinct from everyday bread'],
+      detail:'The ring shape isn’t accidental — round bread with no beginning or end has stood in for eternity and continuity at Ukrainian tables for centuries, especially at weddings.'},
+    {id:'food-23',cat:'food',catLabel:'Food & Drink',title:'Mors — the Tart Cousin of Uzvar',
+      photos:[{src:'images/113-food-mors_drink.jpeg',alt:'A glass of red mors berry drink'}],
+      facts:['A cold drink made from boiled and strained berries, usually cranberry or red currant','Uzvar’s tarter, berry-based counterpart'],
+      detail:'Where uzvar leans sweet with dried fruit, mors goes the other direction entirely — sharp, cold, berry-red, and traditionally the drink handed to anyone running a fever.'},
+    {id:'food-24',cat:'food',catLabel:'Food & Drink',title:'Kyivske Varenya — the Jam That Made Kyiv Famous, Twice',
+      photos:[{src:'images/117-food-kyivske_varenya.jpg',alt:'A jar of Kyivske Varenya fruit preserve'}],
+      facts:['Traditional Ukrainian fruit preserve, often whole-fruit','Kyiv also lends its name to a separate jam-filled candy line'],
+      detail:'The city’s confectionery reputation runs deeper than the Kyivskyi Tort alone — Kyiv-brand preserves and jam candies have been a fixture of Ukrainian pantries for generations.'},
+    {id:'food-25',cat:'food',catLabel:'Food & Drink',title:'Kruchenyky — Meat, Rolled and Stuffed',
+      photos:[{src:'images/121-food-kruchenyky.jpg',alt:'Sliced kruchenyky meat rolls'}],
+      facts:['Thin meat slices rolled around a filling of vegetables, egg, or mushrooms','Slow-braised until tender'],
+      detail:'It’s a dish built entirely around the roll — the filling changes by household, but the technique of pounding meat thin, stuffing it, and braising it low and slow stays constant.'},
+    {id:'food-26',cat:'food',catLabel:'Food & Drink',title:'Massandra — a Century of Crimean Winemaking',
+      photos:[{src:'images/125-food-massandra_winery.jpg',alt:'The historic Massandra winery cellars, Crimea'}],
+      facts:['A historic winery founded in Crimea in the 1890s','Once supplied wine to the Russian imperial court'],
+      detail:'Some of its oldest bottles have been aging in the same cellars since before the Russian Revolution — a wine collection that survived two world wars and several regime changes, and is still, remarkably, drinkable.'},
+    {id:'food-27',cat:'food',catLabel:'Food & Drink',title:'Lviv’s Coffee Culture — and Its Own Origin Myth',
+      photos:[{src:'images/129-food-lviv_coffee.jpg',alt:'A historic coffeehouse interior, Lviv'}],
+      facts:['A café scene dating back to the Austro-Hungarian era','Local legend credits a Ukrainian Cossack with introducing coffee to Vienna after the 1683 siege'],
+      detail:'The story goes that Yuriy Kulczycki, a Cossack-born interpreter, took captured coffee sacks as his reward for saving Vienna and opened the city’s first coffeehouse. Historians are skeptical — but Lviv’s café culture doesn’t need the legend to be excellent.'},
+    {id:'food-28',cat:'food',catLabel:'Food & Drink',title:'Varenukha — a Warming Drink for Cold Nights',
+      photos:[{src:'images/133-food-varenukha.png',alt:'A mug of hot spiced varenukha'}],
+      facts:['A spiced, honey-sweetened alcoholic drink simmered with dried fruit','Traditionally served hot in winter'],
+      detail:'It’s closer to a mulled wine than a shot of horilka — dried fruit, honey, and spices simmered together, meant to be sipped slowly on the coldest nights of the year.'},
+    {id:'food-29',cat:'food',catLabel:'Food & Drink',title:'Kalynivka — Liqueur Made From Kalyna Berries',
+      photos:[{src:'images/137-food-kalynivka.jpg',alt:'A bottle of kalyna-berry liqueur'}],
+      facts:['A sweet-tart liqueur infused with red viburnum berries','Turns the same symbolic berry from the Kalyna card into a drink'],
+      detail:'It takes a berry too bitter to eat raw and turns it into something entirely drinkable — proof that kalyna’s reputation as a national symbol extends past songs and embroidery and straight into the liquor cabinet.'},
+    {id:'food-30',cat:'food',catLabel:'Food & Drink',title:'Ukrainian Craft Beer’s Modern Boom',
+      photos:[{src:'images/141-food-craft_beer_lviv.webp',alt:'A flight of craft beers at a Lviv brewery'}],
+      facts:['A wave of independent breweries opened across Ukraine since the 2010s','Lviv in particular built a reputation as a craft-beer destination'],
+      detail:'It’s one of the more recent food-and-drink stories on this page — a full craft scene built up in barely a decade, with Lviv’s beer festival now drawing visitors the way its coffeehouses always have.'},
+    {id:'food-32',cat:'food',catLabel:'Food & Drink',title:'Oladky — Fluffy Pancakes, Not to Be Confused With Nalysnyky',
+      photos:[{src:'images/145-food-oladky.png',alt:'A stack of oladky pancakes'}],
+      facts:['Small, thick, yeast- or kefir-leavened pancakes','Fluffier and puffier than nalysnyky’s thin crepes'],
+      detail:'Mix them up with nalysnyky at your own risk — one is a thin, foldable crepe, the other a thick, pillowy pancake, and any Ukrainian grandmother will correct you immediately if you confuse them.'}
   ];
 
   var WORLD = [
     {id:'world-01',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Petrykivka — Flowers That Were Never Real',
-      photos:[{src:'images/petrykivka_painting.jpg',alt:'Petrykivka decorative folk painting'}],
+      photos:[{src:'images/4-world-petrykivka_painting.jpg',alt:'Petrykivka decorative folk painting'}],
       facts:['A decorative folk-painting style from the village of Petrykivka','Fantastical flowers, no two painted quite the same'],
       detail:'Nothing in a Petrykivka painting grows in an actual garden — the flowers are invented, brush-stroke by brush-stroke, straight from memory and imagination. UNESCO listed the technique in 2013.'},
-    {id:'world-02',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Opishnya — Ukraine’s Pottery Capital',
-      photos:[{src:'images/opishnya_pottery.jpg',alt:'Opishnya painted ceramics'}],
-      facts:['A small town synonymous with Ukrainian ceramics','Workshops have run there for generations'],
+    {id:'world-02',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Opishnya Village — Ukraine’s Pottery Capital',
+      photos:[{src:'images/10-world-opishnya_pottery.jpg',alt:'Opishnya painted ceramics'}],
+      facts:['A small village synonymous with Ukrainian ceramics','Workshops have run there for generations'],
       detail:'One village, one craft, passed down long enough that “Opishnya” functions as shorthand for the whole tradition — the way “Champagne” means one specific place before it means anything else.'},
     {id:'world-04',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Eurovision — Three Wins, Three Different Eras',
-      photos:[{src:'images/eurovision_ruslana.jpg',alt:'Ruslana performing Wild Dances, Eurovision 2004'}],
+      photos:[{src:'images/16-world-eurovision_ruslana.jpg',alt:'Ruslana performing Wild Dances, Eurovision 2004'}],
       facts:['2004 — Ruslana, “Wild Dances”','2016 — Jamala, “1944”','2022 — Kalush Orchestra, “Stefania”'],
       detail:'Three very different decades, three very different sounds — Ruslana’s Hutsul-war-drum stage show, Jamala’s haunting ballad, Kalush Orchestra’s hip-hop-meets-sopilka mix — and each time, something unmistakably Ukrainian threaded through the production anyway. That part never changes.'},
     {id:'world-05',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Beyond the Border — the Diaspora',
-      photos:[{src:'images/diaspora.jpg',alt:'Ukrainian diaspora community festival, Argentina'}],
-      facts:['Large communities in Canada, going back over a century','Sizeable communities in Argentina and Brazil too'],
-      detail:'That Shevchenko monument in Winnipeg from earlier wasn’t a one-off — whole prairie towns in Canada still run Ukrainian churches, dance troupes, and Saturday schools, and the same thread runs quietly through communities in Argentina and Brazil.'},
+      photos:[{src:'images/22-world-diaspora.jpg',alt:'Ukrainian diaspora community festival, Argentina'}],
+      facts:['Large communities in Canada and the US, some over a century old','Poland now hosts the largest Ukrainian diaspora by sheer numbers','Older, less-discussed communities in Kazakhstan and Australia too'],
+      detail:'That Shevchenko monument in Winnipeg from earlier wasn’t a one-off — whole prairie towns in Canada still run Ukrainian churches, dance troupes, and Saturday schools, and entire “Ukrainian Village” neighbourhoods do the same in Chicago and New York. Poland now holds the largest diaspora by raw numbers, swelled by millions since 2022, while older communities in Argentina, Brazil, and Australia trace back to earlier waves of emigration. Kazakhstan’s is a different story entirely — a Ukrainian-speaking population that didn’t choose to leave, put there by Stalin-era deportations and famine flight, and still largely overlooked.'},
     {id:'world-06',cat:'world',catLabel:'Arts & Ukraine in the World',title:'One Country, 130-Plus Peoples',
-      photos:[{src:'images/multicultural_ukraine.jpg',alt:'Ethnic Ukrainians in traditional dress'}],
+      photos:[{src:'images/28-world-multicultural_ukraine.jpg',alt:'Ethnic Ukrainians in traditional dress'}],
       facts:['Over 130 ethnic minority groups live within Ukraine','Crimean Tatars among the longest-settled'],
       detail:'“Ukrainian” was never one box to check — it’s more of a shared address than a single bloodline, and that was true long before anyone outside the country started paying attention.'},
     {id:'world-07',cat:'world',catLabel:'Arts & Ukraine in the World',title:'The Mriya — Built to Carry the World',
-      photos:[{src:'images/mriya_antonov.jpg',alt:'The Antonov An-225 Mriya cargo plane'}],
+      photos:[{src:'images/34-world-mriya_antonov.jpg',alt:'The Antonov An-225 Mriya cargo plane'}],
       facts:['The Antonov An-225, the largest cargo plane ever built','“Mriya” means “dream” in Ukrainian'],
       detail:'Built in Kyiv, once the only one of its kind on Earth. And it wasn’t a fluke — Dnipro quietly built rockets and satellite hardware for decades too. Ukrainian engineering has a habit of aiming absurdly big.'},
-    {id:'world-08',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Дякую — the Language That Survived',
-      photos:[{src:'images/Daakuju-85.jpg',alt:'Closing image — language and identity'}],
+    {id:'world-08',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Дякую (DYA-koo-yoo) — the Language That Survived',
+      photos:[{src:'images/39-world-Daakuju-85.jpg',alt:'Closing image — language and identity'}],
       facts:['Ukrainian and Russian share a common East Slavic root','Ukrainian was restricted at points under the Russian Empire and USSR'],
       detail:'The two languages are close enough for partial mutual understanding, which makes it easy to miss how much effort, historically, went into discouraging Ukrainian from being spoken, taught, or printed at all. It got spoken, taught, and printed anyway. That’s the whole closing note of this dossier: not what was done to the culture, but what it kept doing regardless — дякую, said in the language it was never supposed to lose.'},
     {id:'world-09',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Kazimir Malevich — Born in Kyiv, Redefined Art',
-      photos:[{src:'images/malevich_photo.jpg',alt:'Kazimir Malevich, painter'}],
+      photos:[{src:'images/44-world-malevich_photo.jpg',alt:'Kazimir Malevich, painter'}],
       facts:['Born in Kyiv in 1879','Painted “Black Square”, one of the most influential works of 20th-century art'],
       detail:'Malevich grew up surrounded by Ukrainian folk embroidery and painted Easter eggs — decades later, he credited exactly that early exposure to bold geometric colour with shaping the abstract style that made him famous.'},
     {id:'world-10',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Ilya Repin — the Cossacks Who Wrote Back',
-      photos:[{src:'images/repin_cossacks_letter.jpg',alt:'Reply of the Zaporozhian Cossacks, by Ilya Repin'}],
+      photos:[{src:'images/49-world-repin_cossacks_letter.jpg',alt:'Reply of the Zaporozhian Cossacks, by Ilya Repin'}],
       facts:['Born near Kharkiv in 1844','His “Reply of the Zaporozhian Cossacks” is one of the most reproduced paintings in the world'],
       detail:'The painting captures Cossacks roaring with laughter while drafting an insult-laden reply to a sultan’s ultimatum — the same freedom-first, unbothered swagger that defined the Zaporozhian Sich centuries earlier.'},
     {id:'world-11',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Oleksandr Dovzhenko — a Founder of World Cinema',
-      photos:[{src:'images/dovzhenko_portrait.jpg',alt:'Oleksandr Dovzhenko, 1930s'}],
+      photos:[{src:'images/54-world-dovzhenko_portrait.jpg',alt:'Oleksandr Dovzhenko, 1930s'}],
       facts:['Born in Chernihiv Oblast (region) in 1894','His 1930 film “Earth” still appears on greatest-films-ever-made lists'],
       detail:'Dovzhenko filmed Ukrainian wheat fields and orchards like sacred ground — long, patient shots that influenced generations of filmmakers who never set foot in the country themselves.'},
     {id:'world-12',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Igor Sikorsky — the Helicopter Started in Kyiv',
-      photos:[{src:'images/sikorsky_portrait.jpg',alt:'Igor Sikorsky'}],
+      photos:[{src:'images/59-world-sikorsky_portrait.jpg',alt:'Igor Sikorsky'}],
       facts:['Born in Kyiv in 1889','Built the first mass-produced helicopter in the world'],
       detail:'He tried and failed to build a helicopter in Kyiv as a young engineer, shelved the idea for decades, emigrated, and finally cracked it in the United States in 1939 — persistence with a multi-decade delay.'},
     {id:'world-13',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Sergei Korolev — the Man Behind the Space Race',
-      photos:[{src:'images/korolev_portrait.jpg',alt:'Sergei Korolev, 1934'}],
+      photos:[{src:'images/64-world-korolev_portrait.jpg',alt:'Sergei Korolev, 1934'}],
       facts:['Born in Zhytomyr in 1907','Chief designer behind Sputnik and the first human spaceflight'],
       detail:'For years his own identity was a state secret — the government wouldn’t even confirm his name publicly while he was alive. The engineer who put the first satellite and the first person into orbit was Ukrainian-born, and almost nobody knew it at the time.'},
     {id:'world-14',cat:'world',catLabel:'Arts & Ukraine in the World',title:'The Klitschko Brothers — Two Heavyweight Champions, One Family',
-      photos:[{src:'images/klitschko_brothers.jpg',alt:'Vitali and Wladimir Klitschko'}],
+      photos:[{src:'images/69-world-klitschko_brothers.jpg',alt:'Vitali and Wladimir Klitschko'}],
       facts:['Vitali and Wladimir Klitschko, both world heavyweight boxing champions','Both hold PhDs, unusually for the sport'],
       detail:'Two brothers from the same household, both reaching the very top of heavyweight boxing at overlapping points in their careers — a family record that boxing historians still bring up as close to unmatched.'},
     {id:'world-15',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Grammarly — a Ukrainian Idea in Half the World’s Browsers',
-      photos:[{src:'images/grammarly_logo.png',alt:'Grammarly, founded by Ukrainians'}],
+      photos:[{src:'images/74-world-grammarly_logo.png',alt:'Grammarly, founded by Ukrainians'}],
       facts:['Founded by three Ukrainians, first built in Kyiv','Now used by tens of millions of people worldwide'],
       detail:'One of the most-installed writing tools on the planet started as a side project among Kyiv university friends who were tired of fixing the same grammar mistakes over and over.'},
     {id:'world-16',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Jan Koum — from Kyiv Oblast (region) to WhatsApp',
-      photos:[{src:'images/koum_portrait.jpg',alt:'Jan Koum, WhatsApp co-founder'}],
+      photos:[{src:'images/79-world-koum_portrait.jpg',alt:'Jan Koum, WhatsApp co-founder'}],
       facts:['Born near Kyiv in 1976','Co-founded WhatsApp, later sold to Facebook for $19 billion'],
       detail:'He grew up without a landline phone in his childhood village outside Kyiv — an odd detail to end up attached to a co-founder of one of the most-used communication apps on Earth.'},
     {id:'world-17',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Max Levchin — Kyiv to PayPal’s Founding Team',
-      photos:[{src:'images/levchin_portrait.jpg',alt:'Max Levchin, PayPal co-founder'}],
+      photos:[{src:'images/84-world-levchin_portrait.jpg',alt:'Max Levchin, PayPal co-founder'}],
       facts:['Born in Kyiv in 1975','Co-founded PayPal as part of the so-called “PayPal Mafia”'],
       detail:'Levchin left Kyiv as a teenager and ended up on the founding team of a company that quietly rewired how the entire internet moves money.'},
     {id:'world-18',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Kozak Mamai — the Cossack Who Became a Folk Icon',
-      photos:[{src:'images/kozak_mamai.jpg',alt:'A traditional Kozak Mamai folk painting'}],
+      photos:[{src:'images/89-world-kozak_mamai.jpg',alt:'A traditional Kozak Mamai folk painting'}],
       facts:['A recurring folk-art figure: a Cossack sitting cross-legged with a bandura','Painted, in some version, in nearly every old Ukrainian village'],
       detail:'Nobody agrees on who he actually was — a real hero, a composite, a symbol of the free Cossack spirit. What’s certain is that his image, alone with his horse and his bandura, got painted onto walls and chests across the country for centuries.'},
     {id:'world-19',cat:'world',catLabel:'Arts & Ukraine in the World',title:'DakhaBrakha — Folk Music, Reinvented Loud',
-      photos:[{src:'images/dakhabrakha.jpg',alt:'DakhaBrakha performing'}],
+      photos:[{src:'images/94-world-dakhabrakha.jpg',alt:'DakhaBrakha performing'}],
       facts:['A Kyiv-based “ethno-chaos” band','Blends Ukrainian folk vocals with global rhythms and towering fur hats'],
-      detail:'They took centuries-old village harmonies and ran them through a completely modern sound system — and somehow it made international festival crowds who’d never heard a word of Ukrainian sing along anyway.'}
+      detail:'They took centuries-old village harmonies and ran them through a completely modern sound system — and somehow it made international festival crowds who’d never heard a word of Ukrainian sing along anyway.'},
+    {id:'world-20',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Lesya Ukrainka — the Poet Ranked Beside Shevchenko',
+      photos:[{src:'images/98-world-lesya_ukrainka.jpg',alt:'A portrait of Lesya Ukrainka'}],
+      facts:['One of the most celebrated Ukrainian poets and playwrights','Wrote much of her major work while seriously ill with tuberculosis'],
+      detail:'She wrote across more genres and languages than most of her male contemporaries combined, working through decades of illness — her image now shares currency and stamps with Shevchenko as the other pillar of Ukrainian literature.'},
+    {id:'world-21',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Ivan Franko — the Third Name in the Literary Trinity',
+      photos:[{src:'images/102-world-portrait_of_ivan_franko.svg',alt:'A portrait of Ivan Franko'}],
+      facts:['Poet, novelist, and political thinker, prolific across genres','His name is attached to a university, a city, and a literary prize'],
+      detail:'Shevchenko and Lesya Ukrainka get top billing, but Franko rounds out what Ukrainians often call their literary “trinity” — and unlike the other two, he also worked as a journalist and translator on top of everything else.'},
+    {id:'world-22',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Mykhailo Hrushevsky — Historian and First President',
+      photos:[{src:'images/106-world-hrushevsky.jpg',alt:'A portrait of Mykhailo Hrushevsky'}],
+      facts:['Wrote a ten-volume history of Ukraine still cited today','Served as the first president of the Ukrainian People’s Republic, 1917–18'],
+      detail:'He spent decades as an academic historian before ending up as head of state almost by accident of timing — a professor who found himself running a short-lived republic during one of the most chaotic stretches of the 20th century.'},
+    {id:'world-23',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Mykola Gogol — Ukrainian-Born, Claimed by Two Literatures',
+      photos:[{src:'images/110-world-gogol_portrait.jpg',alt:'A portrait of Mykola Gogol'}],
+      facts:['Born in Poltava Oblast (region) in 1809, wrote in Russian','Author of “Taras Bulba” and “The Night Before Christmas,” both set in Ukraine'],
+      detail:'He left for Russia young and wrote in Russian his whole career, but his most famous stories are steeped in Ukrainian Cossack folklore and village life — a writer both literatures have long argued over claiming.'},
+    {id:'world-24',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Sonia Delaunay — Odesa’s Export to the Paris Avant-Garde',
+      photos:[{src:'images/114-world-sonia_delaunay.jpg',alt:'A Sonia Delaunay abstract painting'}],
+      facts:['Born in Odesa in 1885, moved to Paris as a teenager','Co-founded Orphism, an early abstract-art movement'],
+      detail:'She and her husband Robert are credited with pushing painting toward pure colour and abstraction years before it was fashionable — and she later became one of the first women to have a retrospective at the Louvre while still alive.'},
+    {id:'world-25',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Alexander Archipenko — Kyiv’s Cubist Sculptor',
+      photos:[{src:'images/118-world-archipenko_sculpture.jpeg',alt:'A geometric Archipenko sculpture'}],
+      facts:['Born in Kyiv in 1887, emigrated to Paris and later the US','Pioneered abstract, geometric sculpture alongside Picasso’s generation'],
+      detail:'He was cutting figures into hollow geometric shapes and negative space before most sculptors dared to abandon the human form entirely — influential enough that art schools still teach his techniques.'},
+    {id:'world-26',cat:'world',catLabel:'Arts & Ukraine in the World',title:'David Burliuk — the “Father of Russian Futurism,” Born in Ukraine',
+      photos:[{src:'images/122-world-david_burliuk.jpg',alt:'A portrait of David Burliuk'}],
+      facts:['Born near Kharkiv in 1882','Co-authored the Russian Futurist manifesto “A Slap in the Face of Public Taste”'],
+      detail:'He painted with cheek and confrontation in equal measure — one of his own manifestos argued for throwing Pushkin and Tolstoy “overboard from the ship of modernity,” about as bold a debut statement as art history offers.'},
+    {id:'world-27',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Solomiya Krushelnytska — the Soprano Who Rescued an Opera',
+      photos:[{src:'images/126-world-krushelnytska.jpg',alt:'A portrait of Solomiya Krushelnytska in costume'}],
+      facts:['World-renowned Ukrainian opera singer, active around 1900','Her performance saved Puccini’s “Madama Butterfly” after its disastrous premiere'],
+      detail:'“Madama Butterfly” flopped so badly on opening night that Puccini pulled it for revisions — Krushelnytska sang the lead in the reworked version months later, and the opera that’s now a global staple owes its second chance largely to her.'},
+    {id:'world-29',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Volodymyr Vernadsky — the Scientist Who Named the Biosphere',
+      photos:[{src:'images/130-world-vernadsky.jpg',alt:'A portrait of Volodymyr Vernadsky'}],
+      facts:['Founded the concept of the biosphere as a scientific field','First president of the Ukrainian Academy of Sciences, 1918'],
+      detail:'He was thinking about Earth as one interconnected living system decades before ecology became a mainstream science — and he helped build Ukraine’s national scientific institutions from scratch while doing it.'},
+    {id:'world-30',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Ivan Pulyui — Photographing X-Rays Before They Had the Name',
+      photos:[{src:'images/134-world-pulyui.jpg',alt:'A portrait of Ivan Pulyui'}],
+      facts:['Ukrainian physicist who produced X-ray-style images of a hand and a coin as early as the 1880s','Röntgen’s 1895 papers are the ones that correctly identified and characterized the new radiation'],
+      detail:'Pulyui built his own vacuum tubes and captured the same kind of ghostly images years before Röntgen’s announcement — he just didn’t realize what he’d found. When Röntgen published, Pulyui confirmed the results in his own lab and, in his own writing, credited Röntgen as the one who’d actually identified the phenomenon.'},
+    {id:'world-31',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Borys Paton — the Welder Behind Spacecraft and Surgery',
+      photos:[{src:'images/138-world-paton.jpg',alt:'A portrait of Borys Paton'}],
+      facts:['Led the Institute of Electric Welding in Kyiv for nearly 70 years','Pioneered welding techniques used in aerospace and even surgery'],
+      detail:'Electric welding sounds unglamorous until you learn Paton’s institute developed techniques used to build spacecraft and, eventually, to weld living tissue in surgery — one Kyiv institute quietly shaping industries most people never connect to Ukraine.'},
+    {id:'world-32',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Andriy Shevchenko — Ukraine’s Ballon d’Or Winner',
+      photos:[{src:'images/142-world-shevchenko_footballer.jpg',alt:'Andriy Shevchenko in an AC Milan kit'}],
+      facts:['Won the Ballon d’Or in 2004, Ukraine’s only recipient','AC Milan and Dynamo Kyiv legend, later Ukraine’s national team manager'],
+      detail:'He’s the answer to “name a Ukrainian footballer” for most of the world, and later swapped the pitch for the dugout — managing the national team he used to score for, at Euro 2020.'},
+    {id:'world-33',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Milla Jovovich & Olga Kurylenko — Hollywood’s Ukrainian Imports',
+      photos:[{src:'images/146-world-jovovich.png',alt:'Milla Jovovich, Resident Evil star'},{src:'images/146-world-kurylenko.jpg',alt:'Olga Kurylenko, Bond girl in Quantum of Solace'}],
+      facts:['Jovovich was born in Kyiv; Kurylenko was born in Berdiansk','Both became action-movie leads — Resident Evil and a James Bond film, respectively'],
+      detail:'Jovovich left as a child and built a career as Hollywood’s go-to action heroine; Kurylenko left as a teenager and ended up as the Bond girl in “Quantum of Solace” — two very different routes out of Ukraine, into the same genre of movie.'},
+    {id:'world-34',cat:'world',catLabel:'Arts & Ukraine in the World',title:'GitLab — Built by a Developer From Kharkiv',
+      photos:[{src:'images/149-world-gitlab.jpeg',alt:'The GitLab logo on a laptop screen'}],
+      facts:['Co-founded by Ukrainian developer Dmitriy Zaporozhets, who still lives and works in Kharkiv','Now one of the world’s largest DevOps platforms, publicly traded'],
+      detail:'He built the first version as a side project while working at a Ukrainian firm — it’s since grown into infrastructure that a huge share of the world’s software developers now rely on daily.'},
+    {id:'world-35',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Preply — a Kyiv Startup Turned Language-Learning Giant',
+      photos:[{src:'images/152-world-preply.png',alt:'A Preply online tutoring session'}],
+      facts:['Founded in Kyiv by three Ukrainians in 2012','Grew into a unicorn-valued language-tutoring platform'],
+      detail:'It started as a small marketplace connecting students with tutors online — over a decade later it’s valued north of a billion dollars, one of several Kyiv-born startups that quietly went global.'},
+    {id:'world-36',cat:'world',catLabel:'Arts & Ukraine in the World',title:'MacPaw — the Mac Software Company From Kyiv',
+      photos:[{src:'images/155-world-macpaw.jpg',alt:'The CleanMyMac app interface'}],
+      facts:['Best known for CleanMyMac, used by millions of Mac owners','Kept operating and shipping updates throughout the full-scale invasion'],
+      detail:'Plenty of Mac users have no idea the cleanup app on their desktop is Ukrainian — MacPaw kept its Kyiv offices running and its software updating even while the city was under direct threat in 2022.'},
+    {id:'world-37',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Readdle — Odesa’s App Store Powerhouse',
+      photos:[{src:'images/158-world-readdle.png',alt:'The Readdle Documents and Scanner Pro apps'}],
+      facts:['Makes Documents, Scanner Pro, and Spark Mail, among others','Consistently ranks among the top-grossing productivity developers on the App Store'],
+      detail:'Most of its apps solve unglamorous problems — scanning a receipt, managing PDFs, sorting email — and Readdle has quietly done it well enough, out of Odesa, to compete directly with much larger Silicon Valley teams.'},
+    {id:'world-39',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Revolut — Co-Founded by an Engineer From Kharkiv',
+      photos:[{src:'images/161-world-revolut_london.jpg',alt:'The Revolut banking app on a phone screen'}],
+      facts:['Co-founded and engineered by Vlad Yatsenko, from Kharkiv','Grew into one of Europe’s most valuable fintech companies'],
+      detail:'The flashier headlines usually go to Revolut’s other co-founder, but the entire banking-app infrastructure was built by a software engineer who grew up in Kharkiv — another entry in Ukraine’s surprisingly long tech-founder list.'},
+    {id:'world-40',cat:'world',catLabel:'Arts & Ukraine in the World',title:'Kyiv’s Double Eurovision Hosting',
+      photos:[{src:'images/164-world-eurovision_2017.jpg',alt:'The Eurovision stage set up in Kyiv'}],
+      facts:['Hosted the Eurovision Song Contest in 2005 and again in 2017','The 2017 edition ran while the country was still recovering from the annexation of Crimea'],
+      detail:'Winning gets you a party for one night; hosting gets you a week of the world’s cameras pointed at your capital — Kyiv did it twice, the second time as a deliberate statement that the country was still very much open.'}
   ];
 
   var GAMES = [
     {id:'games-01',cat:'games',catLabel:'Ukrainian Games',title:'Cossacks — Ukraine’s Global Strategy Hit',
-      photos:[{src:'images/cossacks_game.jpg',alt:'Cossacks: European Wars'}],
+      photos:[{src:'images/5-games-cossacks_game.jpg',alt:'Cossacks: European Wars'}],
       facts:['Made by GSC Game World, based in Kyiv','One of the best-selling real-time strategy series of the early 2000s'],
       detail:'Cossacks: European Wars let players command armies of thousands of tiny 17th-century soldiers at once — a scale few strategy games had attempted before, made by the same Kyiv studio that would later build something completely different.'},
     {id:'games-02',cat:'games',catLabel:'Ukrainian Games',title:'S.T.A.L.K.E.R. — a Game Born From the Zone',
-      photos:[{src:'images/stalker_game.jpg',alt:'S.T.A.L.K.E.R.: Shadow of Chernobyl'}],
+      photos:[{src:'images/11-games-stalker_game.jpg',alt:'S.T.A.L.K.E.R.: Shadow of Chernobyl'}],
       facts:['Made by GSC Game World, based in Kyiv','Set inside a fictionalised version of the Chornobyl Exclusion Zone'],
       detail:'The original 2007 game turned a real, heavily restricted landscape into one of gaming’s most atmospheric settings — introducing the Zone, mutants and all, to millions of players who’d otherwise never have heard of it. A sequel finally shipped in 2024, made by a studio that kept working through a war.'},
     {id:'games-03',cat:'games',catLabel:'Ukrainian Games',title:'Metro — Built by Ukrainians, Set in Moscow’s Tunnels',
-      photos:[{src:'images/metro_game.jpg',alt:'Metro 2033 Redux'}],
+      photos:[{src:'images/17-games-metro_game.jpg',alt:'Metro 2033 Redux'}],
       facts:['Developed by 4A Games, founded in Kyiv','Based on Dmitry Glukhovsky’s post-apocalyptic novel'],
       detail:'4A Games was founded by former GSC Game World developers, and the Metro series (2033, Last Light, Exodus) became one of the most acclaimed post-apocalyptic game franchises around — engineered entirely by a Ukrainian studio.'},
     {id:'games-04',cat:'games',catLabel:'Ukrainian Games',title:'Sherlock Holmes — Kyiv’s Long-Running Detective Series',
-      photos:[{src:'images/sherlock_game.jpg',alt:'Sherlock Holmes Chapter One, by Frogwares'}],
+      photos:[{src:'images/23-games-sherlock_game.jpg',alt:'Sherlock Holmes Chapter One, by Frogwares'}],
       facts:['Made by Frogwares, based in Kyiv','Over a dozen Sherlock Holmes adventure games released since 2002'],
       detail:'Frogwares has quietly built one of the longest-running licensed detective game series in the industry, one careful case at a time, out of the same Kyiv studio for over two decades.'},
     {id:'games-05',cat:'games',catLabel:'Ukrainian Games',title:'The Sinking City — Lovecraft, Made in Kyiv',
-      photos:[{src:'images/sinkingcity_game.jpg',alt:'The Sinking City'}],
+      photos:[{src:'images/29-games-sinkingcity_game.jpg',alt:'The Sinking City'}],
       facts:['Also developed by Frogwares','An open-world detective game set in a flooded 1920s American city'],
       detail:'The same studio behind Sherlock Holmes built an entire waterlogged, Lovecraft-inspired city to investigate instead — proof that Kyiv’s detective-game specialists were never limited to just one detective.'}
   ];
 
   var PLACES = [
     {id:'places-01',cat:'places',catLabel:'Places to Visit',title:'The Carpathians — Hike to the Roof of the Country',
-      photos:[{src:'images/carpathian_highlands.jpg',alt:'The Carpathians'}],
+      photos:[{src:'images/6-places-carpathian_highlands.jpg',alt:'The Carpathians'}],
       facts:['Mount Hoverla, the country’s highest point','The top draw for hiking in Ukraine'],
       detail:'This is the one landscape every itinerary should make room for — ridge trails, mountain huts, and views that make it obvious why this range anchors so much of the country’s folklore.'},
     {id:'places-02',cat:'places',catLabel:'Places to Visit',title:'Kyiv — Golden Domes and a Thousand Years of Layers',
-      photos:[{src:'images/lavra_belltower.jpg',alt:'Kyiv'}],
+      photos:[{src:'images/12-places-lavra_belltower.jpg',alt:'Kyiv'}],
       facts:['St. Sophia Cathedral and the Kyiv Pechersk Lavra, both UNESCO-listed','A capital rebuilt and renewed for over a thousand years'],
       detail:'You could spend a week in the two UNESCO sites alone — Sophia’s mosaics and the Lavra’s underground cave monasteries are centuries older than most of what tourists usually cross oceans to see.'},
     {id:'places-03',cat:'places',catLabel:'Places to Visit',title:'Kamianets-Podilskyi — a Fortress on an Island of Rock',
-      photos:[{src:'images/kamianets_fortress.jpg',alt:'Kamianets-Podilskyi'}],
+      photos:[{src:'images/18-places-kamianets_fortress.jpg',alt:'Kamianets-Podilskyi'}],
       facts:['One of the finest surviving fortresses of the Cossack era','Built on a canyon loop carved by the Smotrych River'],
       detail:'The river did most of the defensive work for free, carving a natural moat around the old town before anyone laid a single stone. The fortress just finished what the canyon started.'},
     {id:'places-04',cat:'places',catLabel:'Places to Visit',title:'Lviv — Coffee, Cobblestones, Character',
-      photos:[{src:'images/lviv_townhall.jpg',alt:'Lviv'}],
+      photos:[{src:'images/24-places-lviv_townhall.jpg',alt:'Lviv'}],
       facts:['The cultural capital of the west','A UNESCO-listed historic centre'],
       detail:'Lviv never quite feels like the rest of the country — more café culture, more Austro-Hungarian rooftops — and that’s exactly why it’s worth the detour.'},
     {id:'places-05',cat:'places',catLabel:'Places to Visit',title:'Kosiv & the Hutsul Region — Where the Crafts Live',
-      photos:[{src:'images/kosiv_ceramics.jpg',alt:'Kosiv'}],
+      photos:[{src:'images/30-places-kosiv_ceramics.jpg',alt:'Kosiv'}],
       facts:['The Carpathian heartland of pysanka-making and folk craft','Home to the Hutsuls (a Carpathian highlander people) and their trembita and painted ceramics'],
       detail:'This is where a lot of the traditions on this page still get made, not just displayed — workshops you can walk into, craftspeople happy to show the wax-and-dye process in person.'},
     {id:'places-06',cat:'places',catLabel:'Places to Visit',title:'Odesa — Sea, Humour, and a Very Particular Accent',
-      photos:[{src:'images/odesa_opera.jpg',alt:'Odesa Opera and Ballet Theatre'}],
+      photos:[{src:'images/35-places-odesa_opera.jpg',alt:'Odesa Opera and Ballet Theatre'}],
       facts:['Ukraine’s biggest Black Sea port city','Famous nationwide for its specific brand of humour'],
       detail:'Odesa has a reputation for wit that other regions openly envy, plus a seafood-heavy table and a seafront built for slow evening walks. It doesn’t feel quite like anywhere else in the country.'},
     {id:'places-07',cat:'places',catLabel:'Places to Visit',title:'The Pink Lake — Nature’s Own Filter',
-      photos:[{src:'images/pink_lake.jpg',alt:'Sasyk-Sivash, a naturally pink salt lake in Crimea'}],
+      photos:[{src:'images/40-places-pink_lake.jpg',alt:'Sasyk-Sivash, a naturally pink salt lake in Crimea'}],
       facts:['A genuinely pink-hued salt lake, caused by algae and high salinity','Changes shade with the season and the light'],
       detail:'No filter, no dye — just a specific algae that thrives in very salty water and turns the whole lake a shade of rose that looks fake in every photo until you’ve stood at the edge of it yourself.'},
     {id:'places-08',cat:'places',catLabel:'Places to Visit',title:'Chornobyl — the Exclusion Zone, Today',
-      photos:[{src:'images/chornobyl_zone.jpg',alt:'A Przewalski’s horse in the Chornobyl Exclusion Zone'}],
+      photos:[{src:'images/45-places-chornobyl_zone.jpg',alt:'A Przewalski’s horse in the Chornobyl Exclusion Zone'}],
       facts:['Now one of Europe’s largest accidental nature reserves','Guided day trips have run since 2011'],
-      detail:'Wolves, lynx, and wild horses have moved back in over the decades, largely undisturbed by people. It’s become one of the strangest, most talked-about dark-tourism destinations anywhere — proof that a landscape can outlast almost anything done to it.'}
+      detail:'Wolves, lynx, and wild horses have moved back in over the decades, largely undisturbed by people. It’s become one of the strangest, most talked-about dark-tourism destinations anywhere — proof that a landscape can outlast almost anything done to it.'},
+    {id:'places-09',cat:'places',catLabel:'Places to Visit',title:'Chernivtsi — Ukraine’s “Little Vienna”',
+      photos:[{src:'images/50-places-chernivtsi_university.jpg',alt:'Austro-Hungarian architecture in Chernivtsi'}],
+      facts:['A former Austro-Hungarian university town in the west','Its main university building looks more like a bishop’s palace than a campus'],
+      detail:'The Austro-Hungarian architecture never left — arcaded courtyards, a residence built for Orthodox metropolitans that’s now a UNESCO-listed university hall, and a downtown that feels closer to Vienna than to most of Ukraine.'},
+    {id:'places-10',cat:'places',catLabel:'Places to Visit',title:'Uman — a Park and a Pilgrimage',
+      photos:[{src:'images/55-places-uman_sofiyivsky_park.png',alt:'Sofiyivsky Park landscaped gardens, Uman'}],
+      facts:['Home to Sofiyivsky Park, an 18th-century landscaped garden','Also a major annual pilgrimage site for Hasidic Jews visiting Rabbi Nachman’s grave'],
+      detail:'Two completely different reasons to visit converge on one small city — a romantic 18th-century park built by a count for his wife, and, every autumn, tens of thousands of pilgrims arriving for Rosh Hashanah.'},
+    {id:'places-11',cat:'places',catLabel:'Places to Visit',title:'Zakarpattia — Ukraine’s Far West',
+      photos:[{src:'images/60-places-uzhhorod_castle.jpg',alt:'Uzhhorod Castle panorama'}],
+      facts:['The region around Uzhhorod, bordering four other countries','Home to Europe’s longest linden alley (planted in the 1920s) and its own distinct cuisine'],
+      detail:'Change trains here and you could just as easily be crossing into Hungary, Slovakia, Poland, or Romania — a corner of the country shaped by all four neighbours at once, with the food and architecture to show for it. Locals will also happily point out that no other linden avenue in Europe runs quite as long as the one along the Uzh embankment, planted back when the city still belonged to Czechoslovakia.'},
+    {id:'places-13',cat:'places',catLabel:'Places to Visit',title:'Vylkove — Ukraine’s Venice, on the Danube Delta',
+      photos:[{src:'images/65-places-vylkove.jpg',alt:'Canal-side houses in Vylkove'}],
+      facts:['A town in the Danube Delta built on canals instead of streets','Many residents still get around by boat'],
+      detail:'Streets are the exception here, not the rule — houses line canals instead of roads, and the boats parked outside front doors do the job a car would anywhere else in the country.'},
+    {id:'places-15',cat:'places',catLabel:'Places to Visit',title:'Poltava — Battlefield History and a Warm Welcome',
+      photos:[{src:'images/70-places-poltava_monument.jpg',alt:'The Poltava battlefield memorial park'}],
+      facts:['Site of the pivotal 1709 battle between Peter I and Hetman Mazepa','Also a regional food hub, famous for its own halushky'],
+      detail:'History buffs come for the battlefield; everyone else stays for the food — Poltava’s reputation as a culinary regional capital runs just as deep as its reputation as a turning point in Eastern European history.'},
+    {id:'places-16',cat:'places',catLabel:'Places to Visit',title:'Podilski Tovtry National Park — Hiking the Fossil Reef',
+      photos:[{src:'images/75-places-podilski_tovtry.jpg',alt:'Hiking trails through the Toltre ridge, Podillia'}],
+      facts:['A national park built around the Toltre limestone ridge','One of Ukraine’s largest national parks, popular for hiking and caving'],
+      detail:'It’s the visitable version of the ancient coral reef running through Podillia — trails, caves, and canyon views built right into what used to be an ocean floor.'},
+    {id:'places-18',cat:'places',catLabel:'Places to Visit',title:'Podil — the Old Trading Quarter Below the Hills',
+      photos:[{src:'images/80-places-podil_district_kyiv.png',alt:'The historic Podil district, Kyiv'}],
+      facts:['Kyiv’s historic lower district, dating back to Kyivan Rus','Traditionally home to merchants, craftsmen, and the city’s river port'],
+      detail:'While princes and clergy occupied the hilltop above, Podil was always where the actual business of the city happened — boats, markets, workshops — and it still carries that same lived-in, unpolished character today, unlike the more formal upper town.'},
+    {id:'places-19',cat:'places',catLabel:'Places to Visit',title:'The Kyiv Funicular — a 1905 Shortcut Up the Hill',
+      photos:[{src:'images/85-places-kyiv_funicular.jpg',alt:'The Kyiv funicular ascending the hill'}],
+      facts:['One of the oldest funiculars still operating in Europe','Connects Podil to the upper town in about ninety seconds'],
+      detail:'Climbing the hill on foot takes a solid ten minutes; the funicular, running since 1905, still does it in under two — a hundred-plus-year-old shortcut that locals use as casually as a bus stop.'},
+    {id:'places-20',cat:'places',catLabel:'Places to Visit',title:'The Pysanka Museum, Kolomyia — a Building Shaped Like an Egg',
+      photos:[{src:'images/90-places-kolomyia_pysanka_museum.jpg',alt:'Pysanka Museum, Kolomyia (main entrance)'}],
+      facts:['The world’s only museum dedicated entirely to pysanky','The building itself is egg-shaped, opened in 2000'],
+      detail:'Inside are thousands of painted eggs from every region of Ukraine and beyond — but most visitors remember the building first: a domed, egg-shaped shell you actually walk into, built specifically to house the collection.'}
   ];
 
   var catColors = { land: 'var(--gold)', myth: 'var(--forest)', food: 'var(--terracotta)', world: 'var(--berry)', games: 'var(--indigo)', places: 'var(--sky)' };
@@ -1022,23 +1349,65 @@ button{font-family:inherit;}
 
   var overlay = document.getElementById('overlay');
   var overlayInner = document.getElementById('overlay-inner');
+  var galleryEl = document.getElementById('gallery');
   var galleryTrack = document.getElementById('gallery-track');
+  var galleryDots = document.getElementById('gallery-dots');
+  var photoIndex = 0;
+  var currentPhotos = [];
 
   function renderGallery(photos, accentHex){
+    currentPhotos = photos;
     galleryTrack.innerHTML = '';
-    var p = photos[0];
-    if (p.placeholder){
-      var ph = document.createElement('div');
-      ph.className = 'gallery-placeholder';
-      ph.style.setProperty('--accent', accentHex);
-      ph.innerHTML = '<span class="icon">📷</span><span class="label">Photo coming soon</span>';
-      galleryTrack.appendChild(ph);
-    } else {
-      var img = document.createElement('img');
-      img.src = p.src; img.alt = p.alt || '';
-      galleryTrack.appendChild(img);
-    }
+    galleryDots.innerHTML = '';
+    photos.forEach(function(p){
+      if (p.placeholder){
+        var ph = document.createElement('div');
+        ph.className = 'gallery-placeholder';
+        ph.style.setProperty('--accent', accentHex);
+        ph.innerHTML = '<span class="icon">📷</span><span class="label">Photo coming soon</span>';
+        galleryTrack.appendChild(ph);
+      } else {
+        var img = document.createElement('img');
+        img.src = p.src; img.alt = p.alt || '';
+        galleryTrack.appendChild(img);
+      }
+    });
+    galleryEl.classList.toggle('has-many', photos.length > 1);
+    photos.forEach(function(_, i){
+      var d = document.createElement('span');
+      if (i === 0) d.classList.add('is-active');
+      galleryDots.appendChild(d);
+    });
+    photoIndex = 0;
+    positionGallery();
   }
+  function positionGallery(){
+    galleryTrack.style.transform = 'translateX(' + (-100 * photoIndex) + '%)';
+    Array.prototype.forEach.call(galleryDots.children, function(d, i){
+      d.classList.toggle('is-active', i === photoIndex);
+    });
+  }
+  function goToPhoto(delta){
+    if (!currentPhotos.length) return;
+    photoIndex = (photoIndex + delta + currentPhotos.length) % currentPhotos.length;
+    positionGallery();
+  }
+  document.querySelector('.gallery-nav.prev').addEventListener('click', function(){ goToPhoto(-1); });
+  document.querySelector('.gallery-nav.next').addEventListener('click', function(){ goToPhoto(1); });
+  document.addEventListener('keydown', function(e){
+    if (!overlay.classList.contains('is-open')) return;
+    if (e.key === 'ArrowRight') goToPhoto(1);
+    if (e.key === 'ArrowLeft') goToPhoto(-1);
+  });
+  var touchStartX = null;
+  galleryEl.addEventListener('touchstart', function(e){ touchStartX = e.touches[0].clientX; });
+  galleryEl.addEventListener('touchend', function(e){
+    if (touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx < -40) goToPhoto(1);
+    else if (dx > 40) goToPhoto(-1);
+    touchStartX = null;
+  });
 
   function markSeen(i){
     var b = BLOCKS[i];
@@ -1119,6 +1488,7 @@ button{font-family:inherit;}
   });
 
   overlay.addEventListener('click', function(e){ if (e.target === overlay) closeOverlay(); });
+
 })();
 </script>
 </body>
