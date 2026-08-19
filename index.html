@@ -78,6 +78,16 @@ button{font-family:inherit;}
 .progress-dot.is-done{background:var(--accent);border-color:var(--accent);}
 .progress-dot.is-pop{animation:dotPop .5s ease;}
 @keyframes dotPop{0%{transform:scale(1);}45%{transform:scale(1.9);}100%{transform:scale(1);}}
+.completion-badge{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:var(--soil);font-weight:700;font-size:12.5px;letter-spacing:.02em;padding:5px 12px;border-radius:999px;white-space:nowrap;font-family:'PT Sans',sans-serif;}
+.completion-badge[hidden]{display:none;}
+.completion-badge.is-new{animation:badgePop .6s cubic-bezier(.34,1.56,.64,1);}
+@keyframes badgePop{0%{transform:scale(0);opacity:0;}60%{transform:scale(1.18);opacity:1;}100%{transform:scale(1);}}
+
+.milestone-track{display:inline-flex;gap:4px;}
+.milestone-pip{font-size:13px;line-height:1;color:rgba(240,228,208,.28);transition:color .3s ease;cursor:default;}
+.milestone-pip.is-hit{color:var(--gold);}
+.milestone-pip.is-new{animation:milestonePop .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes milestonePop{0%{transform:scale(0);}60%{transform:scale(1.35);}100%{transform:scale(1);}}
 
 /* ---------- SESSION BAR ---------- */
 .session-bar{background:var(--soil);border-bottom:1px solid var(--rule);}
@@ -346,6 +356,7 @@ button{font-family:inherit;}
       </form>
       <div class="session-active" id="session-active" hidden>
         <span class="session-you">You: <strong id="session-you-name"></strong></span>
+        <span class="milestone-track" id="milestone-track"></span>
         <button type="button" class="session-switch" id="session-switch">switch name</button>
       </div>
     </div>
@@ -359,6 +370,7 @@ button{font-family:inherit;}
 <div class="progress-bar">
   <div class="progress-inner">
     <span class="progress-count"><span id="progress-num">0</span> / <span id="progress-total">0</span> discovered</span>
+    <span class="completion-badge" id="completion-badge" hidden>★ All discovered</span>
     <div class="progress-track" id="progress-track"></div>
   </div>
 </div>
@@ -1115,6 +1127,22 @@ button{font-family:inherit;}
   var progressTrack = document.getElementById('progress-track');
   document.getElementById('progress-total').textContent = BLOCKS.length;
 
+  var MILESTONES = [
+    {frac:0.25, label:'25% explored'},
+    {frac:0.5,  label:'50% explored'},
+    {frac:0.75, label:'75% explored'},
+    {frac:1,    label:'100% explored — all discovered'}
+  ];
+  var milestoneTrack = document.getElementById('milestone-track');
+  MILESTONES.forEach(function(m, idx){
+    var pip = document.createElement('span');
+    pip.className = 'milestone-pip';
+    pip.id = 'milestone-' + idx;
+    pip.textContent = '★';
+    pip.title = m.label;
+    milestoneTrack.appendChild(pip);
+  });
+
   function tileHasRealPhoto(b){ return b.photos.length && !b.photos[0].placeholder; }
 
   function paintTile(tile, b){
@@ -1175,7 +1203,29 @@ button{font-family:inherit;}
   });
 
   function updateProgressUI(){
-    document.getElementById('progress-num').textContent = Object.keys(seen).length;
+    var count = Object.keys(seen).length;
+    document.getElementById('progress-num').textContent = count;
+    var badge = document.getElementById('completion-badge');
+    if (count >= BLOCKS.length){
+      if (badge.hidden){
+        badge.hidden = false;
+        if (!reduceMotion){ badge.classList.remove('is-new'); void badge.offsetWidth; badge.classList.add('is-new'); }
+      }
+    } else {
+      badge.hidden = true;
+    }
+    var pct = count / BLOCKS.length;
+    MILESTONES.forEach(function(m, idx){
+      var pip = document.getElementById('milestone-' + idx);
+      var hit = pct >= m.frac - 1e-9;
+      var wasHit = pip.classList.contains('is-hit');
+      if (hit && !wasHit){
+        pip.classList.add('is-hit');
+        if (!reduceMotion){ pip.classList.remove('is-new'); void pip.offsetWidth; pip.classList.add('is-new'); }
+      } else if (!hit && wasHit){
+        pip.classList.remove('is-hit');
+      }
+    });
   }
   updateProgressUI();
 
